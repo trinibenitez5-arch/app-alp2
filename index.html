@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ALP Group · App Instaladores</title>
+<style>
+  :root{
+    --green:#16a34a; --green-d:#13833d; --green-l:#dcfce7;
+    --sun:#f59e0b; --sun-l:#fef3c7;
+    --bg:#eef1f4; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+    --line:#e6e9ee; --line-2:#f1f4f7;
+    --blue:#2563eb; --blue-l:#dbeafe;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#d7dce2; color:var(--ink); line-height:1.45;
+    display:flex; justify-content:center; min-height:100vh;
+  }
+  /* Phone frame */
+  #app{
+    width:100%; max-width:440px; background:var(--bg); min-height:100vh;
+    position:relative; overflow:hidden;
+  }
+  @media(min-width:480px){
+    body{align-items:center; padding:24px 0}
+    #app{min-height:auto; height:900px; max-height:92vh; border-radius:42px;
+      box-shadow:0 30px 70px rgba(15,23,42,.35); border:10px solid #0f172a; overflow:hidden}
+  }
+  .screen{position:absolute; inset:0; display:flex; flex-direction:column;
+    background:var(--bg); overflow-y:auto; -webkit-overflow-scrolling:touch;
+    transform:translateX(0); transition:transform .32s cubic-bezier(.22,.61,.36,1);}
+  .screen.hide-right{transform:translateX(100%)}
+  .screen.hide-left{transform:translateX(-22%); filter:brightness(.92)}
+  .screen::-webkit-scrollbar{width:0}
+
+  /* ---------- HOME HEADER ---------- */
+  .home-head{
+    background:linear-gradient(150deg,#16a34a 0%, #0e7a39 100%);
+    color:#fff; padding:54px 22px 26px; border-radius:0 0 28px 28px;
+    position:relative;
+  }
+  .brand{display:flex; align-items:center; gap:11px; color:#fff; margin-bottom:20px}
+  .brand .mark{width:34px; height:34px; flex:none; display:block; color:#5cb8ec}
+  .brand .wm{display:flex; flex-direction:column; line-height:1}
+  .brand .wm b{font-size:16px; font-weight:800; letter-spacing:.4px}
+  .brand .wm small{font-size:8px; letter-spacing:2px; opacity:.85; margin-top:4px; text-transform:uppercase}
+  .greet{font-size:14px; opacity:.85; margin:0}
+  .uname{font-size:25px; font-weight:800; margin:2px 0 0; letter-spacing:-.3px}
+  .urole{font-size:12.5px; opacity:.8; margin-top:3px}
+  .avatar{position:absolute; top:50px; right:22px; width:46px;height:46px;border-radius:50%;
+    background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.5);
+    display:grid; place-items:center; font-weight:700; font-size:16px}
+
+  /* ---------- SEGMENT ---------- */
+  .seg-wrap{padding:18px 18px 6px}
+  .seg{display:flex; background:#e2e7ed; border-radius:14px; padding:4px; gap:4px}
+  .seg button{flex:1; border:0; background:transparent; padding:13px 6px; min-height:46px; border-radius:10px;
+    font-size:14px; font-weight:600; color:var(--muted); cursor:pointer; transition:.18s}
+  .seg button.on{background:#fff; color:var(--green-d); box-shadow:0 1px 3px rgba(15,23,42,.12)}
+
+  .list-meta{display:flex; align-items:center; justify-content:space-between;
+    padding:10px 22px 6px; font-size:12.5px; color:var(--muted)}
+  .list-meta b{color:var(--ink)}
+  .sortbtn{display:flex;align-items:center;gap:4px;background:none;border:0;color:var(--muted);
+    font-size:12.5px;font-weight:600;cursor:pointer}
+
+  /* ---------- CARDS ---------- */
+  .list{padding:6px 16px 30px; display:flex; flex-direction:column; gap:12px}
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:15px 15px 14px; cursor:pointer; border:1px solid var(--line);
+    transition:transform .12s, box-shadow .12s; position:relative; overflow:hidden}
+  .card:active{transform:scale(.985)}
+  .card .accent{position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--green)}
+  .card.k-b .accent{background:var(--sun)} .card.k-a .accent{background:var(--blue)}
+  .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  .cli{font-size:16.5px; font-weight:700; letter-spacing:-.2px; margin:0}
+  .sys{font-size:13px; color:var(--muted); margin:2px 0 0}
+  .kit-badge{font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px;
+    background:var(--green-l); color:var(--green-d); white-space:nowrap}
+  .card.k-b .kit-badge{background:var(--sun-l); color:#92580a}
+  .card.k-a .kit-badge{background:var(--blue-l); color:#1e40af}
+  .card-row{display:flex; align-items:center; gap:8px; margin-top:11px; font-size:13px; color:#334155}
+  .i{width:1em; height:1em; display:block}
+  .card-row .ic{display:inline-flex; align-items:center; justify-content:center; width:18px; flex:none; opacity:.9}
+  .card-row .ic .i{width:16px; height:16px}
+  .grp-ic .i{width:18px; height:18px}
+  .info-ic .i{width:20px; height:20px}
+  .map-off .i{width:20px; height:20px}
+  .card-row.when{font-weight:600}
+  .chev{position:absolute; right:14px; bottom:13px; color:#cbd5e1; font-size:20px}
+  .pill-today{display:inline-block; font-size:10.5px; font-weight:800; color:#fff;
+    background:var(--green); padding:2px 7px; border-radius:6px; margin-left:7px; vertical-align:1px}
+
+  .empty{text-align:center; color:var(--muted); padding:50px 30px; font-size:14px}
+  .empty .em{display:flex; justify-content:center; margin-bottom:10px; color:#94a3b8}
+  .empty .em .i{width:34px; height:34px}
+
+  /* ---------- DETAIL ---------- */
+  .det-head{background:linear-gradient(150deg,#16a34a 0%, #0e7a39 100%); color:#fff;
+    padding:46px 20px 20px; border-radius:0 0 26px 26px}
+  .back{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.16);
+    border:0; color:#fff; font-size:13.5px; font-weight:600; padding:8px 13px 8px 10px;
+    border-radius:999px; cursor:pointer; margin-bottom:16px}
+  .det-cli{font-size:23px; font-weight:800; margin:0; letter-spacing:-.3px}
+  .det-tags{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+  .tag{font-size:11.5px; font-weight:700; background:rgba(255,255,255,.18);
+    padding:5px 11px; border-radius:999px; backdrop-filter:blur(4px)}
+
+  .info{padding:16px 16px 4px; display:flex; flex-direction:column; gap:11px}
+  .info-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:13px 14px;
+    display:flex; gap:12px; align-items:center}
+  .info-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+  .info-ic.cal{background:var(--green-l);color:var(--green-d)} .info-ic.loc{background:var(--blue-l);color:#1e40af}
+  .info-card .lbl{font-size:11.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.3px}
+  .info-card .val{font-size:14.5px; font-weight:700; margin-top:1px}
+  .info-card .sub{font-size:12.5px; color:var(--muted); margin-top:1px}
+  .maplink{margin-left:auto; font-size:12px; font-weight:700; color:var(--blue);
+    background:var(--blue-l); padding:7px 11px; border-radius:10px; text-decoration:none; flex:none}
+
+  .map{margin:4px 16px 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); height:150px; background:#e2e8f0}
+  .map iframe{width:100%; height:100%; border:0; display:block}
+
+  /* materials */
+  .mat-head{padding:22px 20px 4px; display:flex; align-items:baseline; justify-content:space-between}
+  .mat-head h2{font-size:18px; font-weight:800; margin:0; letter-spacing:-.3px}
+  .src-note{font-size:12.5px; color:var(--muted); padding:2px 20px 0}
+  .src-note.est{color:#92580a}
+
+  .progress{margin:12px 18px 4px; background:#fff; border:1px solid var(--line);
+    border-radius:13px; padding:12px 14px}
+  .progress .pt{display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:8px}
+  .progress .pt .n{color:var(--green-d)}
+  .bar{height:8px; background:#e8edf2; border-radius:99px; overflow:hidden}
+  .bar i{display:block; height:100%; width:100%; background:linear-gradient(90deg,#22c55e,#16a34a);
+    transform:scaleX(0); transform-origin:left; transition:transform .3s ease-out; border-radius:99px}
+
+  .groups{padding:10px 16px 40px; display:flex; flex-direction:column; gap:10px}
+  .grp{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .grp-head{display:flex; align-items:center; gap:11px; padding:13px 14px; cursor:pointer; user-select:none}
+  .grp-ic{width:32px;height:32px;border-radius:9px;background:var(--green-l);color:var(--green-d);display:grid;place-items:center;flex:none}
+  .grp.equip .grp-ic{background:var(--sun-l);color:#92580a}
+  .grp-tt{font-size:14.5px; font-weight:700}
+  .grp-ct{font-size:12.5px; color:var(--muted); font-weight:600}
+  .grp-arrow{margin-left:auto; color:#cbd5e1; transition:transform .2s; font-size:13px}
+  .grp.open .grp-arrow{transform:rotate(90deg)}
+  .grp-body{display:none; padding:2px 6px 8px}
+  .grp.open .grp-body{display:block}
+  .item{display:flex; align-items:center; gap:12px; padding:14px 10px; min-height:56px; border-top:1px solid var(--line-2)}
+  .item:first-child{border-top:0}
+  .cbx{width:30px;height:30px;border-radius:8px;border:2px solid #b8c2cf;flex:none;display:grid;place-items:center;
+    cursor:pointer;transition:.15s;background:#fff;font-size:17px;color:#fff}
+  .item.done .cbx{background:var(--green);border-color:var(--green)}
+  .item .nm{font-size:14.5px; line-height:1.35; flex:1}
+  .item.done .nm{color:var(--muted); text-decoration:line-through}
+  .qty{font-size:14px; font-weight:800; color:var(--green-d); background:var(--green-l);
+    padding:5px 10px; border-radius:8px; white-space:nowrap; flex:none}
+  .grp.equip .qty{color:#92580a; background:var(--sun-l)}
+
+  .foot{padding:0 16px 30px}
+  .btn-done{width:100%; border:0; background:var(--green); color:#fff; font-size:15px; font-weight:700;
+    padding:15px; border-radius:14px; cursor:pointer; box-shadow:0 8px 20px rgba(22,163,74,.3)}
+  .btn-done:active{transform:scale(.99)}
+
+  /* offline map fallback */
+  .map-off{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    background:#e8edf2; color:#475569; text-align:center; padding:0 16px}
+  .map-off .mo-t{font-weight:700; font-size:14px; display:flex; align-items:center; gap:8px}
+  .map-off .mo-s{font-size:12.5px; color:#64748b}
+
+  /* toast (undo) */
+  .toast{position:absolute; left:50%; bottom:22px; transform:translate(-50%,16px);
+    background:#0f172a; color:#fff; font-size:13.5px; font-weight:600; padding:12px 16px; border-radius:13px;
+    box-shadow:0 12px 30px rgba(15,23,42,.4); display:flex; align-items:center; gap:6px;
+    opacity:0; pointer-events:none; transition:opacity .22s, transform .22s ease-out; z-index:50; max-width:88%}
+  .toast.show{opacity:1; transform:translate(-50%,0); pointer-events:auto}
+  .toast .undo{background:none; border:0; color:#7dd3a0; font-weight:800; font-size:13.5px; cursor:pointer;
+    padding:4px 6px; min-height:32px}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:.01ms !important; animation-duration:.01ms !important}
+    .screen{transition:none}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HOME -->
+  <section class="screen" id="home">
+    <div class="home-head">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 120 120" fill="currentColor" role="img" aria-label="ALP Group">
+          <path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/>
+          <path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/>
+          <path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 60.00 81.00 Z"/>
+          <path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/>
+        </svg>
+        <span class="wm"><b>ALP GROUP</b><small>Energías Renovables</small></span>
+      </div>
+      <div class="avatar" id="avatar">CF</div>
+      <p class="greet">Hola,</p>
+      <h1 class="uname" id="uname">Carlos Ferreyra</h1>
+      <div class="urole">Instalador · Equipo Buenos Aires</div>
+    </div>
+
+    <div class="seg-wrap">
+      <div class="seg" id="seg">
+        <button data-f="dia" class="on">Hoy</button>
+        <button data-f="semana">Esta semana</button>
+        <button data-f="mes">Este mes</button>
+      </div>
+    </div>
+
+    <div class="list-meta">
+      <span><b id="count">0</b> <span id="countlbl">instalaciones</span></span>
+      <span class="sortbtn">↕ Próximas primero</span>
+    </div>
+
+    <div class="list" id="list"></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="screen hide-right" id="detail"></section>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+</div>
+
+<script type="application/json" id="data">
+{
+ "today": "2026-06-11",
+ "installer": { "nombre": "Carlos Ferreyra", "iniciales": "CF" },
+ "installations": [
+  { "id":"maidana", "cliente":"Familia Maidana", "sistema":"Sistema híbrido (paneles + baterías)", "potencia":"23 kWp", "kit":"Kit C", "kclass":"k-c",
+    "fecha":"2026-06-11T09:00", "fechaTxt":"Hoy", "hora":"09:00",
+    "dir":"Av. Mariano Castex 1450", "loc":"Canning, Buenos Aires", "lat":-34.8688, "lon":-58.5159,
+    "confirmada":true, "mats":"maidana" },
+  { "id":"lawson", "cliente":"Martín Lawson", "sistema":"Sistema híbrido (paneles + baterías)", "potencia":"3,45 kWp", "kit":"Kit C", "kclass":"k-c",
+    "fecha":"2026-06-13T10:30", "fechaTxt":"Sáb 13 jun", "hora":"10:30",
+    "dir":"Los Robles 320", "loc":"Pilar, Buenos Aires", "lat":-34.4585, "lon":-58.9142,
+    "confirmada":true, "mats":"lawson" },
+  { "id":"almacen", "cliente":"Comercio El Almacén", "sistema":"Respaldo energético (solo baterías)", "potencia":"5 kWh", "kit":"Kit B", "kclass":"k-b",
+    "fecha":"2026-06-16T10:00", "fechaTxt":"Mar 16 jun", "hora":"10:00",
+    "dir":"Defensa 850", "loc":"San Telmo, CABA", "lat":-34.6211, "lon":-58.3731,
+    "confirmada":false, "mats":"almacen" },
+  { "id":"rossi", "cliente":"Familia Rossi", "sistema":"On-grid (sin baterías)", "potencia":"11,5 kWp", "kit":"Kit A2", "kclass":"k-a",
+    "fecha":"2026-06-24T09:30", "fechaTxt":"Mié 24 jun", "hora":"09:30",
+    "dir":"Colectora Este 2200", "loc":"Escobar, Buenos Aires", "lat":-34.3487, "lon":-58.7937,
+    "confirmada":false, "mats":"rossi" }
+ ],
+ "materials": {
+  "maidana": [
+   {"cat":"Equipos","items":[
+     {"n":"Growatt SPF5000","c":2,"u":"Un"},
+     {"n":"Dongle Wifi F (incluido en el SPF)","c":2,"u":"Un"},
+     {"n":"Batería AXE 5.0L","c":2,"u":"Un"},
+     {"n":"Base para banco de baterías AXE5.0L-C1","c":1,"u":"Un"},
+     {"n":"Juego de cables para banco de baterías AXE5.0L-C1","c":2,"u":"Un"},
+     {"n":"Growatt MOD 10k (con dongle WiFi S)","c":1,"u":"Un"},
+     {"n":"Meter con anillos 100A - Growatt CT-E","c":1,"u":"Un"}]},
+   {"cat":"Tablero de CA","items":[
+     {"n":"Interruptor termomagnético bipolar IN 40A, ICN 6KA, 2 polos Chint","c":4,"u":"Un"},
+     {"n":"Interruptor diferencial bipolar IN 63A, sens 300mA","c":1,"u":"Un"},
+     {"n":"Conmutadora 63A 2 polos, I-0-II, para riel DIN","c":2,"u":"Un"},
+     {"n":"Protector de descargas atmosféricas tipo II, 2 polos, 220VAC, 40kA","c":2,"u":"Un"},
+     {"n":"Tablero de sobreponer PVC 24 mód DIN tapa fumé con riel","c":1,"u":"Un"},
+     {"n":"Interruptor termomagnético tetrapolar IN 40A, ICN 6KA, 4 polos","c":1,"u":"Un"},
+     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300mA, selectivo","c":1,"u":"Un"},
+     {"n":"Interruptor termomagnético 4 polos, 16A, 380V","c":1,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 3P+N+T, 380Vac, 40kA","c":1,"u":"Un"},
+     {"n":"Terminal tiff para cable de sección 2x6mm2","c":100,"u":"Un"},
+     {"n":"Terminal tiff para cable de sección 6mm2","c":100,"u":"Un"},
+     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"},
+     {"n":"Conectores MC4 macho","c":20,"u":"Un"},
+     {"n":"Conectores MC4 hembra","c":20,"u":"Un"},
+     {"n":"Bornera de paso para conductor 6 mm², Zoloda BPN-06","c":10,"u":"Un"},
+     {"n":"Puente fijo de 10 elementos para borne BPN-06","c":1,"u":"Un"}]},
+   {"cat":"Tablero de CC","items":[
+     {"n":"Termomagnética CC 550V 40A","c":4,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 2P+T, 500Vcc, 40kA","c":4,"u":"Un"},
+     {"n":"Borne de puesta a tierra 6 mm², Zoloda BSLKN-06","c":12,"u":"Un"},
+     {"n":"Tablero de sobreponer PVC 24 mód DIN con riel","c":2,"u":"Un"}]},
+   {"cat":"Cables","items":[
+     {"n":"Cable solar 1x6mm2 negro","c":200,"u":"Mts"},
+     {"n":"Cable solar 1x6mm2 rojo","c":200,"u":"Mts"},
+     {"n":"Cable unipolar 35mm2 rojo","c":5,"u":"Mts"},
+     {"n":"Cable unipolar 35mm2 negro","c":5,"u":"Mts"},
+     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":100,"u":"Mts"},
+     {"n":"Cable unipolar rojo 6mm2","c":100,"u":"Mts"},
+     {"n":"Cable unipolar negro 6mm2","c":100,"u":"Mts"},
+     {"n":"Cable unipolar celeste 6mm2","c":100,"u":"Mts"},
+     {"n":"Cable unipolar marrón 6mm2","c":100,"u":"Mts"},
+     {"n":"Cable unipolar celeste 2,5mm2","c":50,"u":"Mts"},
+     {"n":"Cable unipolar marrón 2,5mm2","c":50,"u":"Mts"}]},
+   {"cat":"Canalizaciones","items":[
+     {"n":"Cable canal plástico 100x50mm (tramos de 2m)","c":4,"u":"Un"},
+     {"n":"Te para cablecanal plástico 100x50mm","c":6,"u":"Un"},
+     {"n":"Curva plana para cablecanal 100x50mm","c":6,"u":"Un"},
+     {"n":"Tapón terminal para cablecanal 100x50mm","c":6,"u":"Un"},
+     {"n":"Curva interna para cablecanal 100x50mm","c":6,"u":"Un"},
+     {"n":"Tubo rígido PVC Ø32 apto intemperie","c":15,"u":"Un"},
+     {"n":"Conector para tubo rígido PVC Ø32","c":45,"u":"Un"},
+     {"n":"Curva para tubo rígido PVC Ø32","c":20,"u":"Un"},
+     {"n":"Cupla para tubo rígido PVC Ø32","c":10,"u":"Un"},
+     {"n":"Grampa para tubo rígido PVC Ø32","c":50,"u":"Un"},
+     {"n":"Tubo rígido PVC Ø25 apto intemperie","c":15,"u":"Un"},
+     {"n":"Conector para tubo rígido PVC Ø25","c":45,"u":"Un"},
+     {"n":"Curva para tubo rígido PVC Ø25","c":20,"u":"Un"},
+     {"n":"Cupla para tubo rígido PVC Ø25","c":10,"u":"Un"},
+     {"n":"Grampa para tubo rígido PVC Ø25","c":50,"u":"Un"},
+     {"n":"Caja estanca PVC 165x165x110","c":4,"u":"Un"},
+     {"n":"Caja estanca PVC 210x210x110","c":3,"u":"Un"},
+     {"n":"Caja estanca PVC 210x210x135","c":2,"u":"Un"}]},
+   {"cat":"Soportes","items":[
+     {"n":"Barral de montaje Chiko 4,2m (CK-43R 4200)","c":20,"u":"Un"},
+     {"n":"End Clamps Chiko (CK-FTE-40)","c":40,"u":"Un"},
+     {"n":"Mid Clamps Chiko (CK-FTM-40)","c":60,"u":"Un"},
+     {"n":"Ground lugs Chiko (CK-GTC-R2)","c":20,"u":"Un"},
+     {"n":"Hooks Chiko (CK-FTH-013)","c":80,"u":"Un"},
+     {"n":"Uniones para perfil Chiko (CK-FT-SKA)","c":20,"u":"Un"}]},
+   {"cat":"Varios","items":[
+     {"n":"Terminal preaislado C3 para cable 6mm2, orificio 5,3mm","c":200,"u":"Un"},
+     {"n":"Terminal estañado para cable 35mm2, agujero Ø3/8\"","c":10,"u":"Un"},
+     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2,5\"","c":150,"u":"Un"},
+     {"n":"Tornillos hexagonal arandelada para madera 14 x 2,5\"","c":200,"u":"Un"},
+     {"n":"Arandela vulcanizada (sello de goma) 1/4 (14)","c":100,"u":"Un"},
+     {"n":"Tornillos punta mecha Phillips 8 x 3/4\"","c":150,"u":"Un"},
+     {"n":"Tornillo tipo Fix 4.5 x 35mm cabeza Phillips","c":100,"u":"Un"},
+     {"n":"Tarugos tipo Fischer SX6 o UX6","c":100,"u":"Un"},
+     {"n":"Precintos 4.8 x 200 mm","c":200,"u":"Un"},
+     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"},
+     {"n":"Discos de corte de 4\"","c":4,"u":"Un"},
+     {"n":"Sellador poliuretánico PU40 blanco","c":2,"u":"Un"},
+     {"n":"Sellador poliuretánico PU40 gris","c":2,"u":"Un"}]}
+  ],
+  "lawson": [
+   {"cat":"Equipos","items":[
+     {"n":"Goodwe GW12KL-ET","c":1,"u":"Un"},
+     {"n":"Dongle Ezlink 3000","c":1,"u":"Un"},
+     {"n":"Batería","c":2,"u":"Un"},
+     {"n":"Base de batería","c":1,"u":"Un"},
+     {"n":"Limitador GM 330","c":1,"u":"Un"}]},
+   {"cat":"Tablero de CA","items":[
+     {"n":"Interruptor termomagnético tetrapolar IN 40A, ICN 6KA, 4 polos","c":2,"u":"Un"},
+     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300, clase A, 6KA","c":2,"u":"Un"},
+     {"n":"Interruptor termomagnético 4 polos, 16A, 380V","c":1,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 3P+N+T, 380Vac, 40kA","c":1,"u":"Un"},
+     {"n":"Llave conmutadora trifásica + N 40A para riel DIN, no rotativa","c":1,"u":"Un"},
+     {"n":"Terminal tiff para cable de sección 2x6mm2","c":50,"u":"Un"},
+     {"n":"Terminal tiff para cable de sección 6mm2","c":100,"u":"Un"},
+     {"n":"Conectores MC4 macho","c":15,"u":"Un"},
+     {"n":"Conectores MC4 hembra","c":15,"u":"Un"},
+     {"n":"Gabinete PVC 36 bocas con riel DIN, 350x450x120, tapa transparente","c":1,"u":"Un"}]},
+   {"cat":"Tablero de CC","items":[
+     {"n":"Termomagnética CC 550V 40A","c":1,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 2P+T, 500Vcc, 40kA","c":1,"u":"Un"},
+     {"n":"Borne de puesta a tierra 6 mm², Zoloda BSLKN-04","c":10,"u":"Un"},
+     {"n":"Tablero de sobreponer PVC 12 bocas con riel DIN, 280x100x20","c":1,"u":"Un"}]},
+   {"cat":"Cables","items":[
+     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":120,"u":"Mts"},
+     {"n":"Cable para baterías 10mm2 negro","c":10,"u":"Un"},
+     {"n":"Cable para baterías 10mm2 rojo","c":10,"u":"Un"},
+     {"n":"Cable solar 1x6mm2 negro","c":100,"u":"Mts"},
+     {"n":"Cable solar 1x6mm2 rojo","c":100,"u":"Mts"},
+     {"n":"Cable unipolar celeste 6mm2 (neutro)","c":50,"u":"Mts"},
+     {"n":"Cable unipolar marrón 6mm2 (Línea R)","c":50,"u":"Mts"},
+     {"n":"Cable unipolar negro 6mm2 (Línea S)","c":50,"u":"Mts"},
+     {"n":"Cable unipolar rojo 6mm2 (Línea T)","c":50,"u":"Mts"},
+     {"n":"Cable unipolar celeste 2,5mm2 (neutro)","c":10,"u":"Mts"},
+     {"n":"Cable unipolar marrón 2,5mm2 (Línea R)","c":10,"u":"Mts"},
+     {"n":"Cable unipolar negro 2,5mm2 (Línea S)","c":10,"u":"Mts"},
+     {"n":"Cable unipolar rojo 2,5mm2 (Línea T)","c":10,"u":"Mts"},
+     {"n":"Cable UTP Cat 5e cobre exterior","c":10,"u":"Mts"}]},
+   {"cat":"Bandejas pasacables","items":[
+     {"n":"Cable canal plástico 100x50mm","c":2,"u":"Un"},
+     {"n":"\"T\" para cable canal plástico 100x50mm","c":2,"u":"Un"},
+     {"n":"Curva 90 plana para cable canal 100x50mm","c":2,"u":"Un"},
+     {"n":"Curva interna para cable canal 100x50mm","c":2,"u":"Un"},
+     {"n":"Acople final (tapa extremo) para cable canal 100x50mm","c":2,"u":"Un"},
+     {"n":"Tubo rígido PVC Ø32 apto intemperie","c":12,"u":"Un"},
+     {"n":"Conector para tubo rígido PVC Ø32","c":30,"u":"Un"},
+     {"n":"Curva para tubo rígido PVC Ø32","c":25,"u":"Un"},
+     {"n":"Cupla para tubo rígido PVC Ø32","c":10,"u":"Un"},
+     {"n":"Grampa para tubo rígido PVC Ø32","c":30,"u":"Un"},
+     {"n":"Tubo rígido PVC Ø25 apto intemperie","c":12,"u":"Un"},
+     {"n":"Conector para tubo rígido PVC Ø25","c":30,"u":"Un"},
+     {"n":"Curva para tubo rígido PVC Ø25","c":25,"u":"Un"},
+     {"n":"Cupla para tubo rígido PVC Ø25","c":6,"u":"Un"},
+     {"n":"Grampa para tubo rígido PVC Ø25","c":30,"u":"Un"},
+     {"n":"Caja estanca PVC 165x165x110","c":3,"u":"Un"},
+     {"n":"Caja estanca PVC 210x210x110","c":2,"u":"Un"}]},
+   {"cat":"Usos varios obra","items":[
+     {"n":"Terminal preaislado para cable 6mm2, orificio 3/16\"","c":100,"u":"Un"},
+     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2 1/2\"","c":100,"u":"Un"},
+     {"n":"Arandela vulcanizada (sello de goma) 1/4 (14)","c":100,"u":"Un"},
+     {"n":"Tornillos punta mecha Phillips 8 x 3/4\"","c":100,"u":"Un"},
+     {"n":"Tornillo tipo Fix 4.5 x 35mm cabeza Phillips","c":100,"u":"Un"},
+     {"n":"Tarugos tipo Fischer SX6 o UX6","c":100,"u":"Un"},
+     {"n":"Precintos 4.8 x 200 mm","c":200,"u":"Un"},
+     {"n":"Cinta aisladora PVC 19mm x 20m","c":3,"u":"Un"}]}
+  ],
+  "almacen": [
+   {"cat":"Equipos","items":[
+     {"n":"Batería litio LFP 5 kWh","c":1,"u":"Un"},
+     {"n":"Inversor/cargador UPS solar","c":1,"u":"Un"},
+     {"n":"Tablero de transferencia automática","c":1,"u":"Un"}]},
+   {"cat":"Tablero de CA","items":[
+     {"n":"Interruptor termomagnético bipolar IN 40A, 2 polos","c":2,"u":"Un"},
+     {"n":"Interruptor diferencial bipolar IN 63A, sens 300mA","c":1,"u":"Un"},
+     {"n":"Llave conmutadora 63A 2 polos, I-0-II","c":1,"u":"Un"},
+     {"n":"Gabinete PVC 12 bocas con riel DIN, tapa transparente","c":1,"u":"Un"}]},
+   {"cat":"Cables","items":[
+     {"n":"Cable para baterías 10mm2 negro","c":5,"u":"Un"},
+     {"n":"Cable para baterías 10mm2 rojo","c":5,"u":"Un"},
+     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":30,"u":"Mts"}]},
+   {"cat":"Puesta a tierra","items":[
+     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"},
+     {"n":"Borne de puesta a tierra 6 mm², Zoloda","c":4,"u":"Un"}]},
+   {"cat":"Varios","items":[
+     {"n":"Terminal preaislado para cable 6mm2","c":30,"u":"Un"},
+     {"n":"Precintos 4.8 x 200 mm","c":100,"u":"Un"},
+     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"}]}
+  ],
+  "rossi": [
+   {"cat":"Equipos","items":[
+     {"n":"Inversor on-grid Growatt MOD 11k (con dongle WiFi)","c":1,"u":"Un"},
+     {"n":"Meter con anillos 100A - Growatt CT-E","c":1,"u":"Un"}]},
+   {"cat":"Soportes","items":[
+     {"n":"Barral de montaje Chiko 4,2m (CK-43R 4200)","c":11,"u":"Un"},
+     {"n":"End Clamps Chiko (CK-FTE-40)","c":22,"u":"Un"},
+     {"n":"Mid Clamps Chiko (CK-FTM-40)","c":34,"u":"Un"},
+     {"n":"Hooks Chiko (CK-FTH-013)","c":44,"u":"Un"},
+     {"n":"Ground lugs Chiko (CK-GTC-R2)","c":11,"u":"Un"}]},
+   {"cat":"Tablero de CA","items":[
+     {"n":"Interruptor termomagnético tetrapolar IN 40A, 4 polos","c":1,"u":"Un"},
+     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300mA","c":1,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 380Vac, 40kA","c":1,"u":"Un"},
+     {"n":"Tablero de sobreponer PVC 24 mód DIN con riel","c":1,"u":"Un"},
+     {"n":"Conectores MC4 macho","c":16,"u":"Un"},
+     {"n":"Conectores MC4 hembra","c":16,"u":"Un"}]},
+   {"cat":"Tablero de CC","items":[
+     {"n":"Termomagnética CC 550V 40A","c":2,"u":"Un"},
+     {"n":"Protector de descargas tipo II, 500Vcc, 40kA","c":2,"u":"Un"},
+     {"n":"Tablero de sobreponer PVC 18 mód DIN con riel","c":1,"u":"Un"}]},
+   {"cat":"Cables","items":[
+     {"n":"Cable solar 1x6mm2 negro","c":150,"u":"Mts"},
+     {"n":"Cable solar 1x6mm2 rojo","c":150,"u":"Mts"},
+     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":60,"u":"Mts"}]},
+   {"cat":"Puesta a tierra","items":[
+     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"}]},
+   {"cat":"Varios","items":[
+     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2,5\"","c":100,"u":"Un"},
+     {"n":"Precintos 4.8 x 200 mm","c":150,"u":"Un"},
+     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"}]}
+  ]
+ }
+}
+</script>
+
+<script>
+const DB = JSON.parse(document.getElementById('data').textContent);
+const TODAY = DB.today;
+// ---------- iconos (SVG de línea, currentColor) ----------
+const ICONS = {
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  package:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  battery:'<rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/>',
+  power:'<path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  wave:'<path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/>',
+  pipes:'<rect x="3" y="5" width="18" height="6" rx="3"/><rect x="3" y="13" width="18" height="6" rx="3"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  ground:'<line x1="12" y1="3" x2="12" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/><line x1="10" y1="20" x2="14" y2="20"/>',
+  kit:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+  truck:'<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/>',
+  inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  wifioff:'<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>'
+};
+function icon(name){
+  return `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||ICONS.package}</svg>`;
+}
+const CAT_IC = {
+  "Equipos":"battery","Servicios":"truck","Tablero de CA":"power","Tablero de CC":"zap",
+  "Cables":"wave","Canalizaciones":"pipes","Bandejas pasacables":"pipes","Soportes":"tool",
+  "Puesta a tierra":"ground","Varios":"kit","Usos varios obra":"kit"
+};
+// ---------- check state (persisted offline) ----------
+const checks = loadChecks(); // id -> Set of "cat|i"
+function loadChecks(){
+  try{
+    const raw = localStorage.getItem('alp_checks');
+    if(!raw) return {};
+    const o = JSON.parse(raw); const out = {};
+    for(const k in o) out[k] = new Set(o[k]);
+    return out;
+  }catch(e){ return {}; }
+}
+function saveChecks(){
+  try{
+    const o = {};
+    for(const k in checks) o[k] = [...checks[k]];
+    localStorage.setItem('alp_checks', JSON.stringify(o));
+  }catch(e){}
+}
+// ---------- toast (con deshacer) ----------
+let toastTimer;
+function showToast(msg, undoFn){
+  const t = document.getElementById('toast');
+  t.innerHTML = msg + (undoFn ? ' <button class="undo">Deshacer</button>' : '');
+  t.classList.add('show');
+  if(undoFn) t.querySelector('.undo').onclick = ()=>{ undoFn(); hideToast(); };
+  clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 4500);
+}
+function hideToast(){ document.getElementById('toast').classList.remove('show'); }
+
+// ---------- date helpers ----------
+function sameDay(iso){ return iso.slice(0,10) === TODAY; }
+function within(iso, days){
+  const d = new Date(iso.slice(0,10)+"T00:00:00");
+  const t = new Date(TODAY+"T00:00:00");
+  const diff = (d - t)/86400000;
+  return diff >= 0 && diff <= days;
+}
+function sameMonth(iso){ return iso.slice(0,7) === TODAY.slice(0,7); }
+function filterList(f){
+  let arr = DB.installations.filter(x=>{
+    if(f==="dia") return sameDay(x.fecha);
+    if(f==="semana") return within(x.fecha,6);
+    return sameMonth(x.fecha);
+  });
+  arr.sort((a,b)=> a.fecha.localeCompare(b.fecha)); // próximas primero
+  return arr;
+}
+function totalItems(matKey){
+  return DB.materials[matKey].reduce((s,g)=> s+g.items.length,0);
+}
+
+// ---------- HOME ----------
+const listEl = document.getElementById('list');
+const countEl = document.getElementById('count');
+const countLbl = document.getElementById('countlbl');
+let curFilter = "dia";
+
+function renderHome(){
+  const arr = filterList(curFilter);
+  countEl.textContent = arr.length;
+  countLbl.textContent = arr.length===1 ? "instalación" : "instalaciones";
+  if(!arr.length){
+    listEl.innerHTML = `<div class="empty"><span class="em">${icon('inbox')}</span>No hay instalaciones en este período.</div>`;
+    return;
+  }
+  listEl.innerHTML = arr.map(x=>{
+    const today = sameDay(x.fecha);
+    const total = totalItems(x.mats);
+    return `<div class="card ${x.kclass}" onclick="openDetail('${x.id}')">
+      <span class="accent"></span>
+      <div class="card-top">
+        <div>
+          <p class="cli">${x.cliente}${today?'<span class="pill-today">HOY</span>':''}</p>
+          <p class="sys">${x.sistema} · ${x.potencia}</p>
+        </div>
+        <span class="kit-badge">${x.kit}</span>
+      </div>
+      <div class="card-row when"><span class="ic">${icon('calendar')}</span> ${x.fechaTxt} · ${x.hora} hs</div>
+      <div class="card-row"><span class="ic">${icon('pin')}</span> ${x.loc}</div>
+      <div class="card-row"><span class="ic">${icon('package')}</span> ${total} ítems para llevar</div>
+      <span class="chev">›</span>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('seg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on');
+  curFilter = b.dataset.f;
+  renderHome();
+});
+
+// ---------- DETAIL ----------
+const detailEl = document.getElementById('detail');
+
+function openDetail(id){
+  const x = DB.installations.find(i=>i.id===id);
+  if(!checks[id]) checks[id] = new Set();
+  const groups = DB.materials[x.mats];
+  const total = totalItems(x.mats);
+  const bbox = [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C');
+  const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${x.lat}%2C${x.lon}`;
+  const gmaps = `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`;
+  const online = navigator.onLine;
+  const mapBlock = online
+    ? `<div class="map"><iframe loading="lazy" src="${mapSrc}"></iframe></div>`
+    : `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`;
+  const allLoaded = checks[id].size >= total;
+
+  const groupsHtml = groups.map((g,gi)=>{
+    const ic = icon(CAT_IC[g.cat] || "package");
+    const isEquip = g.cat==="Equipos";
+    const items = g.items.map((it,ii)=>{
+      const key = g.cat+"|"+ii;
+      const done = checks[id].has(key);
+      return `<div class="item ${done?'done':''}" onclick="toggleItem('${id}','${g.cat.replace(/'/g,"")}',${ii},this)">
+        <div class="cbx">${done?'✓':''}</div>
+        <div class="nm">${it.n}</div>
+        <div class="qty">${it.c} ${it.u}</div>
+      </div>`;
+    }).join('');
+    return `<div class="grp ${isEquip?'equip open':''}">
+      <div class="grp-head" onclick="this.parentElement.classList.toggle('open')">
+        <span class="grp-ic">${ic}</span>
+        <span><div class="grp-tt">${g.cat}</div><div class="grp-ct">${g.items.length} ítems</div></span>
+        <span class="grp-arrow">›</span>
+      </div>
+      <div class="grp-body">${items}</div>
+    </div>`;
+  }).join('');
+
+  detailEl.innerHTML = `
+    <div class="det-head">
+      <button class="back" onclick="closeDetail()">‹ Volver</button>
+      <h1 class="det-cli">${x.cliente}</h1>
+      <div class="det-tags">
+        <span class="tag">${x.kit}</span>
+        <span class="tag">${x.sistema}</span>
+        <span class="tag">${x.potencia}</span>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="info-card">
+        <div class="info-ic cal">${icon('calendar')}</div>
+        <div><div class="lbl">Fecha y hora</div>
+          <div class="val">${x.fechaTxt} · ${x.hora} hs</div>
+          <div class="sub">${fullDate(x.fecha)}</div></div>
+      </div>
+      <div class="info-card">
+        <div class="info-ic loc">${icon('pin')}</div>
+        <div><div class="lbl">Ubicación</div>
+          <div class="val">${x.dir}</div>
+          <div class="sub">${x.loc}</div></div>
+        <a class="maplink" href="${gmaps}" target="_blank" rel="noopener">Cómo llegar</a>
+      </div>
+    </div>
+    ${mapBlock}
+
+    <div class="mat-head"><h2>Qué tenés que llevar</h2><span class="grp-ct">${total} ítems</span></div>
+    <div class="src-note ${x.confirmada?'':'est'}">${x.confirmada
+        ? '✓ Lista confirmada según cotización de la obra'
+        : '≈ Lista estimada según el tipo de kit (a confirmar)'}</div>
+
+    <div class="progress">
+      <div class="pt"><span>Cargado en la camioneta</span><span class="n" id="ptxt">0 / ${total}</span></div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+
+    <div class="groups">${groupsHtml}</div>
+
+    <div class="foot">
+      <button class="btn-done" id="btnAll" onclick="markAll('${id}')">${allLoaded ? 'Desmarcar todo' : 'Marcar todo como cargado'}</button>
+    </div>
+  `;
+  detailEl.scrollTop = 0;
+  document.getElementById('home').classList.add('hide-left');
+  detailEl.classList.remove('hide-right');
+  updateProgress(id);
+}
+
+function fullDate(iso){
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const d=new Date(iso);
+  return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+function toggleItem(id, cat, ii, el){
+  const key = cat+"|"+ii;
+  // match against real cat key (cat may have had quotes stripped, but ours have none)
+  if(checks[id].has(key)) checks[id].delete(key); else checks[id].add(key);
+  el.classList.toggle('done');
+  el.querySelector('.cbx').textContent = el.classList.contains('done') ? '✓' : '';
+  saveChecks();
+  updateProgress(id);
+}
+
+function totalFor(id){
+  const x = DB.installations.find(i=>i.id===id);
+  return totalItems(x.mats);
+}
+function updateProgress(id){
+  const total = totalFor(id);
+  const done = checks[id].size;
+  const bar = document.getElementById('pbar');
+  const txt = document.getElementById('ptxt');
+  const btn = document.getElementById('btnAll');
+  if(bar) bar.style.transform = `scaleX(${total ? done/total : 0})`;
+  if(txt) txt.textContent = `${done} / ${total}`;
+  if(btn) btn.textContent = (total>0 && done>=total) ? 'Desmarcar todo' : 'Marcar todo como cargado';
+}
+function markAll(id){
+  const x = DB.installations.find(i=>i.id===id);
+  const groups = DB.materials[x.mats];
+  const allDone = checks[id].size >= totalFor(id);
+  const prev = new Set(checks[id]);          // para deshacer
+  checks[id] = new Set();
+  if(!allDone){
+    groups.forEach(g=> g.items.forEach((_,ii)=> checks[id].add(g.cat+"|"+ii)));
+  } else {
+    showToast('Se desmarcó todo.', ()=>{ checks[id] = prev; saveChecks(); openDetail(id); });
+  }
+  saveChecks();
+  openDetail(id); // re-render with state
+}
+
+function closeDetail(){
+  detailEl.classList.add('hide-right');
+  document.getElementById('home').classList.remove('hide-left');
+}
+
+// init
+document.getElementById('uname').textContent = DB.installer.nombre;
+document.getElementById('avatar').textContent = DB.installer.iniciales;
+renderHome();
+</script>
+</body>
+</html>
