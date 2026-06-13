@@ -144,6 +144,7 @@
   .grp-head{display:flex; align-items:center; gap:11px; padding:13px 14px; cursor:pointer; user-select:none}
   .grp-ic{width:32px;height:32px;border-radius:9px;background:var(--green-l);color:var(--green-d);display:grid;place-items:center;flex:none}
   .grp.equip .grp-ic{background:var(--sun-l);color:#92580a}
+  .grp.tools .grp-ic{background:var(--blue-l);color:#1e40af}
   .grp-tt{font-size:14.5px; font-weight:700}
   .grp-ct{font-size:12.5px; color:var(--muted); font-weight:600}
   .grp-arrow{margin-left:auto; color:#cbd5e1; transition:transform .2s; font-size:13px}
@@ -180,6 +181,67 @@
   .toast.show{opacity:1; transform:translate(-50%,0); pointer-events:auto}
   .toast .undo{background:none; border:0; color:#7dd3a0; font-weight:800; font-size:13.5px; cursor:pointer;
     padding:4px 6px; min-height:32px}
+
+  /* estado de obra (tiempos) */
+  .card-tags{display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex:none}
+  .est-chip{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap}
+  .est-chip.curso{background:var(--blue-l); color:#1e40af}
+  .est-chip.fin{background:var(--green-l); color:var(--green-d)}
+
+  .estado{padding:14px 16px 0}
+  .est-card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px}
+  .est-card.curso{border-color:#bfdbfe; background:#f5f9ff}
+  .est-card.fin{border-color:#bbf7d0; background:#f4fdf7}
+  .est-top{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+  .est-badge{font-size:11px; font-weight:800; padding:5px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.4px}
+  .est-badge.pend{background:#eef0f3; color:#64748b}
+  .est-badge.curso{background:var(--blue-l); color:#1e40af}
+  .est-badge.fin{background:var(--green-l); color:var(--green-d)}
+  .est-sub{font-size:12.5px; color:var(--muted)}
+  .est-times{display:flex; gap:16px; margin-bottom:12px; font-size:13px; color:#334155; font-weight:600}
+  .est-times span{display:flex; align-items:center; gap:6px}
+  .est-times .i{width:15px; height:15px; opacity:.7}
+  .est-btn{width:100%; border:0; border-radius:12px; padding:14px; font-size:15px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px}
+  .est-btn .i{width:18px; height:18px}
+  .est-btn.start{background:var(--green); color:#fff; box-shadow:0 8px 20px rgba(22,163,74,.28)}
+  .est-btn.stop{background:#2563eb; color:#fff; box-shadow:0 8px 20px rgba(37,99,235,.28)}
+  .est-btn.ghost{background:transparent; color:var(--muted); border:1px solid var(--line); padding:10px; font-size:13.5px; box-shadow:none}
+
+  /* cierre de obra */
+  .sec-tt{font-size:18px; font-weight:800; margin:0; padding:16px 4px 8px; letter-spacing:-.3px}
+  .cierre{padding:4px 16px 36px}
+  .cierre-card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:12px}
+  .cl-h{display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:700; margin-bottom:12px}
+  .cl-h .i{width:18px; height:18px; color:var(--muted)}
+  .cl-ct{margin-left:auto; font-size:12px; color:var(--muted); font-weight:600}
+  .desv-list{display:flex; flex-direction:column; gap:8px; margin-bottom:12px}
+  .desv-item{display:flex; align-items:center; gap:9px; background:#f7f9fb; border-radius:10px; padding:9px 6px 9px 10px}
+  .desv-cat{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:6px; white-space:nowrap; flex:none}
+  .desv-cat.mas{background:#fee2e2; color:#b91c1c}
+  .desv-cat.menos{background:#dbeafe; color:#1e40af}
+  .desv-cat.prob{background:#fef3c7; color:#92580a}
+  .desv-cat.otro{background:#eef0f3; color:#475569}
+  .desv-txt{font-size:13.3px; flex:1; line-height:1.35}
+  .mini-del{background:none; border:0; color:#94a3b8; cursor:pointer; flex:none; width:30px; height:30px; display:grid; place-items:center}
+  .mini-del .i{width:16px; height:16px}
+  .mini-empty{font-size:12.5px; color:var(--muted); padding:2px 2px 8px}
+  .desv-form{display:flex; flex-direction:column; gap:8px}
+  .dv-cat,.dv-txt{width:100%; border:1px solid var(--line); border-radius:10px; padding:12px; font-size:14px; font-family:inherit; background:#fff; color:var(--ink)}
+  .dv-txt{min-height:46px}
+  .dv-add{border:0; background:var(--green-l); color:var(--green-d); font-weight:700; font-size:14px; border-radius:10px; padding:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px}
+  .dv-add .i{width:16px; height:16px}
+
+  /* fotos */
+  .fotos-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:8px; margin-bottom:12px}
+  .foto{position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:#eef0f3}
+  .foto img{width:100%; height:100%; object-fit:cover; display:block}
+  .foto-del{position:absolute; top:4px; right:4px; width:26px; height:26px; border:0; border-radius:50%;
+    background:rgba(15,23,42,.6); color:#fff; display:grid; place-items:center; cursor:pointer}
+  .foto-del .i{width:14px; height:14px}
+  .foto-btn{display:flex; align-items:center; justify-content:center; gap:8px; border:1.5px dashed #cbd5e1; border-radius:12px;
+    padding:14px; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer}
+  .foto-btn .i{width:18px; height:18px}
 
   @media (prefers-reduced-motion: reduce){
     *{transition-duration:.01ms !important; animation-duration:.01ms !important}
@@ -479,7 +541,15 @@ const ICONS = {
   kit:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
   truck:'<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/>',
   inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
-  wifioff:'<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>'
+  wifioff:'<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  toolbox:'<path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M8 9V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><line x1="3" y1="13" x2="21" y2="13"/><rect x="9.5" y="11.5" width="5" height="3" rx="1"/>',
+  play:'<polygon points="6 4 20 12 6 20 6 4"/>',
+  stop:'<rect x="5" y="5" width="14" height="14" rx="2"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+  camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  alert:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
 };
 function icon(name){
   return `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||ICONS.package}</svg>`;
@@ -487,8 +557,34 @@ function icon(name){
 const CAT_IC = {
   "Equipos":"battery","Servicios":"truck","Tablero de CA":"power","Tablero de CC":"zap",
   "Cables":"wave","Canalizaciones":"pipes","Bandejas pasacables":"pipes","Soportes":"tool",
-  "Puesta a tierra":"ground","Varios":"kit","Usos varios obra":"kit"
+  "Puesta a tierra":"ground","Varios":"kit","Usos varios obra":"kit","Herramientas":"toolbox"
 };
+// ---------- Herramientas: misma caja en todas las obras (versión recortada) ----------
+const HERRAMIENTAS = { cat:"Herramientas", items:[
+  {n:"Escalera extensible (2 cuerpos)"},
+  {n:"Arnés de seguridad + eslinga"},
+  {n:"Casco, lentes y guantes de trabajo"},
+  {n:"Guantes dieléctricos"},
+  {n:"Soga para izar materiales al techo"},
+  {n:"Atornillador/taladro de impacto + baterías"},
+  {n:"Amoladora angular"},
+  {n:"Pistola de calor (termocontraíbles)"},
+  {n:"Juego de destornilladores (Phillips y planos)"},
+  {n:"Juego de llaves combinadas + Allen"},
+  {n:"Llave dinamométrica"},
+  {n:"Pinzas (punta, corte y universal)"},
+  {n:"Pinza pelacables"},
+  {n:"Maza (para la jabalina de tierra)"},
+  {n:"Arco de sierra (caños PVC)"},
+  {n:"Pasacables / sonda"},
+  {n:"Trincheta, cinta métrica y nivel"},
+  {n:"Pistola para sellador"},
+  {n:"Crimpadora MC4 + llave MC4"},
+  {n:"Crimpadora de terminales"},
+  {n:"Multímetro / pinza amperométrica (CC)"},
+  {n:"Detector de tensión"}
+]};
+function obraGroups(matKey){ return DB.materials[matKey].concat([HERRAMIENTAS]); }
 // ---------- check state (persisted offline) ----------
 const checks = loadChecks(); // id -> Set of "cat|i"
 function loadChecks(){
@@ -518,6 +614,105 @@ function showToast(msg, undoFn){
 }
 function hideToast(){ document.getElementById('toast').classList.remove('show'); }
 
+// ---------- registro de obra: tiempos, desviaciones, fotos (persistido) ----------
+const obras = loadObras(); // id -> {startedAt, finishedAt, desv:[{cat,txt}], fotos:[{data,caption}]}
+function loadObras(){ try{ return JSON.parse(localStorage.getItem('alp_obras')||'{}'); }catch(e){ return {}; } }
+function saveObras(){ try{ localStorage.setItem('alp_obras', JSON.stringify(obras)); return true; }catch(e){ return false; } }
+function obraState(id){ if(!obras[id]) obras[id]={startedAt:null,finishedAt:null,desv:[],fotos:[]}; return obras[id]; }
+function estadoObra(id){ const o=obras[id]; if(!o||!o.startedAt) return 'pendiente'; return o.finishedAt ? 'finalizada' : 'en_curso'; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtTime(iso){ const d=new Date(iso); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function fmtDur(a,b){ let m=Math.max(0,Math.round((new Date(b)-new Date(a))/60000)); const h=Math.floor(m/60); m=m%60; return (h?h+'h ':'')+m+'min'; }
+function nowISO(){ return new Date().toISOString(); }
+
+function iniciarObra(id){ const o=obraState(id); o.startedAt=nowISO(); o.finishedAt=null; saveObras(); renderEstado(id); renderCierre(id); }
+function finalizarObra(id){ const o=obraState(id); if(!o.startedAt) o.startedAt=nowISO(); o.finishedAt=nowISO(); saveObras(); renderEstado(id); renderCierre(id); renderHome();
+  const c=document.getElementById('cierre'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'}); }
+function reabrirObra(id){ const o=obraState(id); o.finishedAt=null; saveObras(); renderEstado(id); renderHome(); }
+
+const DESV_CATS = ['Material de más','Material de menos','Problema en techo','Demora de acceso','Otro'];
+function desvClass(cat){ return cat==='Material de más'?'mas':cat==='Material de menos'?'menos':cat==='Otro'?'otro':'prob'; }
+function addDesv(id){
+  const sel=document.getElementById('dvCat'), inp=document.getElementById('dvTxt');
+  const txt=(inp.value||'').trim(); if(!txt){ inp.focus(); return; }
+  obraState(id).desv.push({cat:sel.value, txt});
+  saveObras(); renderCierre(id);
+}
+function removeDesv(id,i){ obraState(id).desv.splice(i,1); saveObras(); renderCierre(id); }
+
+function addFoto(id, input){
+  const file = input.files && input.files[0]; if(!file) return;
+  const o = obraState(id);
+  if(o.fotos.length>=6){ showToast('Máximo 6 fotos por obra.'); input.value=''; return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1000; let w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      o.fotos.push({data:cv.toDataURL('image/jpeg',0.7), caption:''});
+      if(!saveObras()){ o.fotos.pop(); showToast('No hay más espacio para fotos en este teléfono.'); }
+      renderCierre(id);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function removeFoto(id,i){ obraState(id).fotos.splice(i,1); saveObras(); renderCierre(id); }
+
+function estadoHTML(id){
+  const st=estadoObra(id), o=obras[id]||{};
+  if(st==='pendiente') return `<div class="est-card">
+      <div class="est-top"><span class="est-badge pend">Pendiente</span><span class="est-sub">Tocá cuando llegues y arranques</span></div>
+      <button class="est-btn start" onclick="iniciarObra('${id}')">${icon('play')} Iniciar obra</button>
+    </div>`;
+  if(st==='en_curso') return `<div class="est-card curso">
+      <div class="est-top"><span class="est-badge curso">En curso</span><span class="est-sub">Desde las ${fmtTime(o.startedAt)} hs</span></div>
+      <button class="est-btn stop" onclick="finalizarObra('${id}')">${icon('stop')} Finalizar obra</button>
+    </div>`;
+  return `<div class="est-card fin">
+      <div class="est-top"><span class="est-badge fin">Finalizada</span><span class="est-sub">Duración ${fmtDur(o.startedAt,o.finishedAt)}</span></div>
+      <div class="est-times"><span>${icon('play')} Inicio ${fmtTime(o.startedAt)} hs</span><span>${icon('stop')} Fin ${fmtTime(o.finishedAt)} hs</span></div>
+      <button class="est-btn ghost" onclick="reabrirObra('${id}')">Reabrir obra</button>
+    </div>`;
+}
+function renderEstado(id){ const el=document.getElementById('estado'); if(el) el.innerHTML=estadoHTML(id); }
+
+function cierreHTML(id){
+  const o=obraState(id);
+  const desv = o.desv.length ? o.desv.map((d,i)=>`<div class="desv-item">
+      <span class="desv-cat ${desvClass(d.cat)}">${d.cat}</span>
+      <span class="desv-txt">${esc(d.txt)}</span>
+      <button class="mini-del" onclick="removeDesv('${id}',${i})" aria-label="Quitar">${icon('x')}</button>
+    </div>`).join('') : `<div class="mini-empty">Todavía no cargaste desviaciones.</div>`;
+  const fotos = o.fotos.length ? `<div class="fotos-grid">`+o.fotos.map((f,i)=>`<div class="foto">
+      <img src="${f.data}" alt="Foto de la obra">
+      <button class="foto-del" onclick="removeFoto('${id}',${i})" aria-label="Quitar foto">${icon('x')}</button>
+    </div>`).join('')+`</div>` : `<div class="mini-empty">Sin fotos cargadas.</div>`;
+  const opts = DESV_CATS.map(c=>`<option>${c}</option>`).join('');
+  return `<h2 class="sec-tt">Cierre de obra</h2>
+    <div class="cierre-card">
+      <div class="cl-h">${icon('alert')} Desviaciones</div>
+      <div class="desv-list">${desv}</div>
+      <div class="desv-form">
+        <select id="dvCat" class="dv-cat">${opts}</select>
+        <input id="dvTxt" class="dv-txt" type="text" placeholder="Detalle (ej: se usaron 50 m más de cable solar)">
+        <button class="dv-add" onclick="addDesv('${id}')">${icon('plus')} Agregar</button>
+      </div>
+    </div>
+    <div class="cierre-card">
+      <div class="cl-h">${icon('camera')} Fotos <span class="cl-ct">${o.fotos.length}/6</span></div>
+      ${fotos}
+      <label class="foto-btn">${icon('camera')} Agregar foto
+        <input type="file" accept="image/*" capture="environment" onchange="addFoto('${id}', this)" hidden>
+      </label>
+    </div>`;
+}
+function renderCierre(id){ const el=document.getElementById('cierre'); if(el) el.innerHTML=cierreHTML(id); }
+
 // ---------- date helpers ----------
 function sameDay(iso){ return iso.slice(0,10) === TODAY; }
 function within(iso, days){
@@ -537,7 +732,7 @@ function filterList(f){
   return arr;
 }
 function totalItems(matKey){
-  return DB.materials[matKey].reduce((s,g)=> s+g.items.length,0);
+  return obraGroups(matKey).reduce((s,g)=> s+g.items.length,0);
 }
 
 // ---------- HOME ----------
@@ -557,6 +752,9 @@ function renderHome(){
   listEl.innerHTML = arr.map(x=>{
     const today = sameDay(x.fecha);
     const total = totalItems(x.mats);
+    const est = estadoObra(x.id);
+    const estChip = est==='en_curso' ? '<span class="est-chip curso">En curso</span>'
+                  : est==='finalizada' ? '<span class="est-chip fin">Finalizada</span>' : '';
     return `<div class="card ${x.kclass}" onclick="openDetail('${x.id}')">
       <span class="accent"></span>
       <div class="card-top">
@@ -564,7 +762,7 @@ function renderHome(){
           <p class="cli">${x.cliente}${today?'<span class="pill-today">HOY</span>':''}</p>
           <p class="sys">${x.sistema} · ${x.potencia}</p>
         </div>
-        <span class="kit-badge">${x.kit}</span>
+        <div class="card-tags"><span class="kit-badge">${x.kit}</span>${estChip}</div>
       </div>
       <div class="card-row when"><span class="ic">${icon('calendar')}</span> ${x.fechaTxt} · ${x.hora} hs</div>
       <div class="card-row"><span class="ic">${icon('pin')}</span> ${x.loc}</div>
@@ -588,7 +786,7 @@ const detailEl = document.getElementById('detail');
 function openDetail(id){
   const x = DB.installations.find(i=>i.id===id);
   if(!checks[id]) checks[id] = new Set();
-  const groups = DB.materials[x.mats];
+  const groups = obraGroups(x.mats);
   const total = totalItems(x.mats);
   const bbox = [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C');
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${x.lat}%2C${x.lon}`;
@@ -602,19 +800,20 @@ function openDetail(id){
   const groupsHtml = groups.map((g,gi)=>{
     const ic = icon(CAT_IC[g.cat] || "package");
     const isEquip = g.cat==="Equipos";
+    const isTools = g.cat==="Herramientas";
     const items = g.items.map((it,ii)=>{
       const key = g.cat+"|"+ii;
       const done = checks[id].has(key);
       return `<div class="item ${done?'done':''}" onclick="toggleItem('${id}','${g.cat.replace(/'/g,"")}',${ii},this)">
         <div class="cbx">${done?'✓':''}</div>
         <div class="nm">${it.n}</div>
-        <div class="qty">${it.c} ${it.u}</div>
+        ${it.c ? `<div class="qty">${it.c} ${it.u}</div>` : ''}
       </div>`;
     }).join('');
-    return `<div class="grp ${isEquip?'equip open':''}">
+    return `<div class="grp ${isEquip?'equip open':''}${isTools?'tools open':''}">
       <div class="grp-head" onclick="this.parentElement.classList.toggle('open')">
         <span class="grp-ic">${ic}</span>
-        <span><div class="grp-tt">${g.cat}</div><div class="grp-ct">${g.items.length} ítems</div></span>
+        <span><div class="grp-tt">${g.cat}</div><div class="grp-ct">${g.items.length} ${isTools?'herramientas':'ítems'}</div></span>
         <span class="grp-arrow">›</span>
       </div>
       <div class="grp-body">${items}</div>
@@ -649,6 +848,8 @@ function openDetail(id){
     </div>
     ${mapBlock}
 
+    <div id="estado" class="estado">${estadoHTML(id)}</div>
+
     <div class="mat-head"><h2>Qué tenés que llevar</h2><span class="grp-ct">${total} ítems</span></div>
     <div class="src-note ${x.confirmada?'':'est'}">${x.confirmada
         ? '✓ Lista confirmada según cotización de la obra'
@@ -664,6 +865,8 @@ function openDetail(id){
     <div class="foot">
       <button class="btn-done" id="btnAll" onclick="markAll('${id}')">${allLoaded ? 'Desmarcar todo' : 'Marcar todo como cargado'}</button>
     </div>
+
+    <div id="cierre" class="cierre">${cierreHTML(id)}</div>
   `;
   detailEl.scrollTop = 0;
   document.getElementById('home').classList.add('hide-left');
@@ -704,7 +907,7 @@ function updateProgress(id){
 }
 function markAll(id){
   const x = DB.installations.find(i=>i.id===id);
-  const groups = DB.materials[x.mats];
+  const groups = obraGroups(x.mats);
   const allDone = checks[id].size >= totalFor(id);
   const prev = new Set(checks[id]);          // para deshacer
   checks[id] = new Set();
