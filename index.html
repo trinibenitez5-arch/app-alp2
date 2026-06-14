@@ -315,7 +315,7 @@
 // ============================================================
 const SUPABASE_URL = 'https://mdovqpblzflictxreajz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_woFfvS4AyhJtAa7GjUwuIw_QlkzA61y';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ============================================================
 //  ESTADO GLOBAL — se llena desde Supabase al cargar
@@ -365,7 +365,7 @@ async function cargarDatos() {
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString();
     const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-    const { data: obras, error: errorObras } = await supabase
+    const { data: obras, error: errorObras } = await sbClient
       .from('obras')
       .select('*')
       .gte('fecha', primerDiaMes)
@@ -379,7 +379,7 @@ async function cargarDatos() {
     let materialesMap = {};
 
     if (obraIds.length > 0) {
-      const { data: mats, error: errorMats } = await supabase
+      const { data: mats, error: errorMats } = await sbClient
         .from('materiales')
         .select('*')
         .in('obra_id', obraIds)
@@ -494,16 +494,16 @@ async function guardarInicioJornada(obraId) {
   if (obraId.startsWith('demo-')) return;
   try {
     // Buscar si ya existe jornada para esta obra
-    const { data: existente } = await supabase
+    const { data: existente } = await sbClient
       .from('jornadas')
       .select('id')
       .eq('obra_id', obraId)
       .single();
 
     if (existente) {
-      await supabase.from('jornadas').update({ iniciada_at: new Date().toISOString() }).eq('id', existente.id);
+      await sbClient.from('jornadas').update({ iniciada_at: new Date().toISOString() }).eq('id', existente.id);
     } else {
-      await supabase.from('jornadas').insert({ obra_id: obraId, iniciada_at: new Date().toISOString() });
+      await sbClient.from('jornadas').insert({ obra_id: obraId, iniciada_at: new Date().toISOString() });
     }
   } catch(err) {
     console.warn('No se pudo guardar inicio en Supabase (se guardó localmente):', err);
@@ -513,14 +513,14 @@ async function guardarInicioJornada(obraId) {
 async function guardarFinJornada(obraId) {
   if (obraId.startsWith('demo-')) return;
   try {
-    const { data: existente } = await supabase
+    const { data: existente } = await sbClient
       .from('jornadas')
       .select('id')
       .eq('obra_id', obraId)
       .single();
 
     if (existente) {
-      await supabase.from('jornadas').update({ finalizada_at: new Date().toISOString() }).eq('id', existente.id);
+      await sbClient.from('jornadas').update({ finalizada_at: new Date().toISOString() }).eq('id', existente.id);
     }
   } catch(err) {
     console.warn('No se pudo guardar fin en Supabase (se guardó localmente):', err);
@@ -533,7 +533,7 @@ async function guardarFinJornada(obraId) {
 async function guardarDesviacion(obraId, categoria, descripcion) {
   if (obraId.startsWith('demo-')) return;
   try {
-    await supabase.from('desviaciones').insert({
+    await sbClient.from('desviaciones').insert({
       obra_id: obraId,
       categoria,
       descripcion
@@ -560,14 +560,14 @@ async function subirFotoSupabase(obraId, dataUrl, index) {
     const blob = await res.blob();
     const path = `${obraId}/foto_${Date.now()}_${index}.jpg`;
 
-    const { error: errStorage } = await supabase.storage
+    const { error: errStorage } = await sbClient.storage
       .from('fotos-obras')
       .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
 
     if (errStorage) throw errStorage;
 
     // Registrar en tabla fotos
-    await supabase.from('fotos').insert({ obra_id: obraId, storage_path: path });
+    await sbClient.from('fotos').insert({ obra_id: obraId, storage_path: path });
 
     return path;
   } catch(err) {
