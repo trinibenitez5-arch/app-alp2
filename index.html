@@ -288,243 +288,296 @@
   <!-- DETAIL -->
   <section class="screen hide-right" id="detail"></section>
 
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" style="position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100">
+    <svg width="48" height="48" viewBox="0 0 120 120" fill="#16a34a" opacity="0.9"><path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/><path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/><path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 60.00 81.00 Z"/><path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/></svg>
+    <p style="color:var(--muted);font-size:14px;font-weight:600;margin:0">Conectando con ALP Group...</p>
+  </div>
+
+  <!-- OFFLINE BANNER -->
+  <div id="offline-banner" style="display:none;position:absolute;top:0;left:0;right:0;background:#f59e0b;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;gap:8px;align-items:center;z-index:99;text-align:center">
+    ⚠ Sin conexión · Mostrando datos de ejemplo
+  </div>
+
   <!-- TOAST -->
   <div id="toast" class="toast"></div>
 </div>
 
-<script type="application/json" id="data">
-{
- "today": "2026-06-11",
- "installer": { "nombre": "Carlos Ferreyra", "iniciales": "CF" },
- "installations": [
-  { "id":"maidana", "cliente":"Familia Maidana", "sistema":"Sistema híbrido (paneles + baterías)", "potencia":"23 kWp", "kit":"Kit C", "kclass":"k-c",
-    "fecha":"2026-06-11T09:00", "fechaTxt":"Hoy", "hora":"09:00",
-    "dir":"Av. Mariano Castex 1450", "loc":"Canning, Buenos Aires", "lat":-34.8688, "lon":-58.5159,
-    "confirmada":true, "mats":"maidana" },
-  { "id":"lawson", "cliente":"Martín Lawson", "sistema":"Sistema híbrido (paneles + baterías)", "potencia":"3,45 kWp", "kit":"Kit C", "kclass":"k-c",
-    "fecha":"2026-06-13T10:30", "fechaTxt":"Sáb 13 jun", "hora":"10:30",
-    "dir":"Los Robles 320", "loc":"Pilar, Buenos Aires", "lat":-34.4585, "lon":-58.9142,
-    "confirmada":true, "mats":"lawson" },
-  { "id":"almacen", "cliente":"Comercio El Almacén", "sistema":"Respaldo energético (solo baterías)", "potencia":"5 kWh", "kit":"Kit B", "kclass":"k-b",
-    "fecha":"2026-06-16T10:00", "fechaTxt":"Mar 16 jun", "hora":"10:00",
-    "dir":"Defensa 850", "loc":"San Telmo, CABA", "lat":-34.6211, "lon":-58.3731,
-    "confirmada":false, "mats":"almacen" },
-  { "id":"rossi", "cliente":"Familia Rossi", "sistema":"On-grid (sin baterías)", "potencia":"11,5 kWp", "kit":"Kit A2", "kclass":"k-a",
-    "fecha":"2026-06-24T09:30", "fechaTxt":"Mié 24 jun", "hora":"09:30",
-    "dir":"Colectora Este 2200", "loc":"Escobar, Buenos Aires", "lat":-34.3487, "lon":-58.7937,
-    "confirmada":false, "mats":"rossi" }
- ],
- "materials": {
-  "maidana": [
-   {"cat":"Equipos","items":[
-     {"n":"Growatt SPF5000","c":2,"u":"Un"},
-     {"n":"Dongle Wifi F (incluido en el SPF)","c":2,"u":"Un"},
-     {"n":"Batería AXE 5.0L","c":2,"u":"Un"},
-     {"n":"Base para banco de baterías AXE5.0L-C1","c":1,"u":"Un"},
-     {"n":"Juego de cables para banco de baterías AXE5.0L-C1","c":2,"u":"Un"},
-     {"n":"Growatt MOD 10k (con dongle WiFi S)","c":1,"u":"Un"},
-     {"n":"Meter con anillos 100A - Growatt CT-E","c":1,"u":"Un"}]},
-   {"cat":"Tablero de CA","items":[
-     {"n":"Interruptor termomagnético bipolar IN 40A, ICN 6KA, 2 polos Chint","c":4,"u":"Un"},
-     {"n":"Interruptor diferencial bipolar IN 63A, sens 300mA","c":1,"u":"Un"},
-     {"n":"Conmutadora 63A 2 polos, I-0-II, para riel DIN","c":2,"u":"Un"},
-     {"n":"Protector de descargas atmosféricas tipo II, 2 polos, 220VAC, 40kA","c":2,"u":"Un"},
-     {"n":"Tablero de sobreponer PVC 24 mód DIN tapa fumé con riel","c":1,"u":"Un"},
-     {"n":"Interruptor termomagnético tetrapolar IN 40A, ICN 6KA, 4 polos","c":1,"u":"Un"},
-     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300mA, selectivo","c":1,"u":"Un"},
-     {"n":"Interruptor termomagnético 4 polos, 16A, 380V","c":1,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 3P+N+T, 380Vac, 40kA","c":1,"u":"Un"},
-     {"n":"Terminal tiff para cable de sección 2x6mm2","c":100,"u":"Un"},
-     {"n":"Terminal tiff para cable de sección 6mm2","c":100,"u":"Un"},
-     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"},
-     {"n":"Conectores MC4 macho","c":20,"u":"Un"},
-     {"n":"Conectores MC4 hembra","c":20,"u":"Un"},
-     {"n":"Bornera de paso para conductor 6 mm², Zoloda BPN-06","c":10,"u":"Un"},
-     {"n":"Puente fijo de 10 elementos para borne BPN-06","c":1,"u":"Un"}]},
-   {"cat":"Tablero de CC","items":[
-     {"n":"Termomagnética CC 550V 40A","c":4,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 2P+T, 500Vcc, 40kA","c":4,"u":"Un"},
-     {"n":"Borne de puesta a tierra 6 mm², Zoloda BSLKN-06","c":12,"u":"Un"},
-     {"n":"Tablero de sobreponer PVC 24 mód DIN con riel","c":2,"u":"Un"}]},
-   {"cat":"Cables","items":[
-     {"n":"Cable solar 1x6mm2 negro","c":200,"u":"Mts"},
-     {"n":"Cable solar 1x6mm2 rojo","c":200,"u":"Mts"},
-     {"n":"Cable unipolar 35mm2 rojo","c":5,"u":"Mts"},
-     {"n":"Cable unipolar 35mm2 negro","c":5,"u":"Mts"},
-     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":100,"u":"Mts"},
-     {"n":"Cable unipolar rojo 6mm2","c":100,"u":"Mts"},
-     {"n":"Cable unipolar negro 6mm2","c":100,"u":"Mts"},
-     {"n":"Cable unipolar celeste 6mm2","c":100,"u":"Mts"},
-     {"n":"Cable unipolar marrón 6mm2","c":100,"u":"Mts"},
-     {"n":"Cable unipolar celeste 2,5mm2","c":50,"u":"Mts"},
-     {"n":"Cable unipolar marrón 2,5mm2","c":50,"u":"Mts"}]},
-   {"cat":"Canalizaciones","items":[
-     {"n":"Cable canal plástico 100x50mm (tramos de 2m)","c":4,"u":"Un"},
-     {"n":"Te para cablecanal plástico 100x50mm","c":6,"u":"Un"},
-     {"n":"Curva plana para cablecanal 100x50mm","c":6,"u":"Un"},
-     {"n":"Tapón terminal para cablecanal 100x50mm","c":6,"u":"Un"},
-     {"n":"Curva interna para cablecanal 100x50mm","c":6,"u":"Un"},
-     {"n":"Tubo rígido PVC Ø32 apto intemperie","c":15,"u":"Un"},
-     {"n":"Conector para tubo rígido PVC Ø32","c":45,"u":"Un"},
-     {"n":"Curva para tubo rígido PVC Ø32","c":20,"u":"Un"},
-     {"n":"Cupla para tubo rígido PVC Ø32","c":10,"u":"Un"},
-     {"n":"Grampa para tubo rígido PVC Ø32","c":50,"u":"Un"},
-     {"n":"Tubo rígido PVC Ø25 apto intemperie","c":15,"u":"Un"},
-     {"n":"Conector para tubo rígido PVC Ø25","c":45,"u":"Un"},
-     {"n":"Curva para tubo rígido PVC Ø25","c":20,"u":"Un"},
-     {"n":"Cupla para tubo rígido PVC Ø25","c":10,"u":"Un"},
-     {"n":"Grampa para tubo rígido PVC Ø25","c":50,"u":"Un"},
-     {"n":"Caja estanca PVC 165x165x110","c":4,"u":"Un"},
-     {"n":"Caja estanca PVC 210x210x110","c":3,"u":"Un"},
-     {"n":"Caja estanca PVC 210x210x135","c":2,"u":"Un"}]},
-   {"cat":"Soportes","items":[
-     {"n":"Barral de montaje Chiko 4,2m (CK-43R 4200)","c":20,"u":"Un"},
-     {"n":"End Clamps Chiko (CK-FTE-40)","c":40,"u":"Un"},
-     {"n":"Mid Clamps Chiko (CK-FTM-40)","c":60,"u":"Un"},
-     {"n":"Ground lugs Chiko (CK-GTC-R2)","c":20,"u":"Un"},
-     {"n":"Hooks Chiko (CK-FTH-013)","c":80,"u":"Un"},
-     {"n":"Uniones para perfil Chiko (CK-FT-SKA)","c":20,"u":"Un"}]},
-   {"cat":"Varios","items":[
-     {"n":"Terminal preaislado C3 para cable 6mm2, orificio 5,3mm","c":200,"u":"Un"},
-     {"n":"Terminal estañado para cable 35mm2, agujero Ø3/8\"","c":10,"u":"Un"},
-     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2,5\"","c":150,"u":"Un"},
-     {"n":"Tornillos hexagonal arandelada para madera 14 x 2,5\"","c":200,"u":"Un"},
-     {"n":"Arandela vulcanizada (sello de goma) 1/4 (14)","c":100,"u":"Un"},
-     {"n":"Tornillos punta mecha Phillips 8 x 3/4\"","c":150,"u":"Un"},
-     {"n":"Tornillo tipo Fix 4.5 x 35mm cabeza Phillips","c":100,"u":"Un"},
-     {"n":"Tarugos tipo Fischer SX6 o UX6","c":100,"u":"Un"},
-     {"n":"Precintos 4.8 x 200 mm","c":200,"u":"Un"},
-     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"},
-     {"n":"Discos de corte de 4\"","c":4,"u":"Un"},
-     {"n":"Sellador poliuretánico PU40 blanco","c":2,"u":"Un"},
-     {"n":"Sellador poliuretánico PU40 gris","c":2,"u":"Un"}]}
-  ],
-  "lawson": [
-   {"cat":"Equipos","items":[
-     {"n":"Goodwe GW12KL-ET","c":1,"u":"Un"},
-     {"n":"Dongle Ezlink 3000","c":1,"u":"Un"},
-     {"n":"Batería","c":2,"u":"Un"},
-     {"n":"Base de batería","c":1,"u":"Un"},
-     {"n":"Limitador GM 330","c":1,"u":"Un"}]},
-   {"cat":"Tablero de CA","items":[
-     {"n":"Interruptor termomagnético tetrapolar IN 40A, ICN 6KA, 4 polos","c":2,"u":"Un"},
-     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300, clase A, 6KA","c":2,"u":"Un"},
-     {"n":"Interruptor termomagnético 4 polos, 16A, 380V","c":1,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 3P+N+T, 380Vac, 40kA","c":1,"u":"Un"},
-     {"n":"Llave conmutadora trifásica + N 40A para riel DIN, no rotativa","c":1,"u":"Un"},
-     {"n":"Terminal tiff para cable de sección 2x6mm2","c":50,"u":"Un"},
-     {"n":"Terminal tiff para cable de sección 6mm2","c":100,"u":"Un"},
-     {"n":"Conectores MC4 macho","c":15,"u":"Un"},
-     {"n":"Conectores MC4 hembra","c":15,"u":"Un"},
-     {"n":"Gabinete PVC 36 bocas con riel DIN, 350x450x120, tapa transparente","c":1,"u":"Un"}]},
-   {"cat":"Tablero de CC","items":[
-     {"n":"Termomagnética CC 550V 40A","c":1,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 2P+T, 500Vcc, 40kA","c":1,"u":"Un"},
-     {"n":"Borne de puesta a tierra 6 mm², Zoloda BSLKN-04","c":10,"u":"Un"},
-     {"n":"Tablero de sobreponer PVC 12 bocas con riel DIN, 280x100x20","c":1,"u":"Un"}]},
-   {"cat":"Cables","items":[
-     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":120,"u":"Mts"},
-     {"n":"Cable para baterías 10mm2 negro","c":10,"u":"Un"},
-     {"n":"Cable para baterías 10mm2 rojo","c":10,"u":"Un"},
-     {"n":"Cable solar 1x6mm2 negro","c":100,"u":"Mts"},
-     {"n":"Cable solar 1x6mm2 rojo","c":100,"u":"Mts"},
-     {"n":"Cable unipolar celeste 6mm2 (neutro)","c":50,"u":"Mts"},
-     {"n":"Cable unipolar marrón 6mm2 (Línea R)","c":50,"u":"Mts"},
-     {"n":"Cable unipolar negro 6mm2 (Línea S)","c":50,"u":"Mts"},
-     {"n":"Cable unipolar rojo 6mm2 (Línea T)","c":50,"u":"Mts"},
-     {"n":"Cable unipolar celeste 2,5mm2 (neutro)","c":10,"u":"Mts"},
-     {"n":"Cable unipolar marrón 2,5mm2 (Línea R)","c":10,"u":"Mts"},
-     {"n":"Cable unipolar negro 2,5mm2 (Línea S)","c":10,"u":"Mts"},
-     {"n":"Cable unipolar rojo 2,5mm2 (Línea T)","c":10,"u":"Mts"},
-     {"n":"Cable UTP Cat 5e cobre exterior","c":10,"u":"Mts"}]},
-   {"cat":"Bandejas pasacables","items":[
-     {"n":"Cable canal plástico 100x50mm","c":2,"u":"Un"},
-     {"n":"\"T\" para cable canal plástico 100x50mm","c":2,"u":"Un"},
-     {"n":"Curva 90 plana para cable canal 100x50mm","c":2,"u":"Un"},
-     {"n":"Curva interna para cable canal 100x50mm","c":2,"u":"Un"},
-     {"n":"Acople final (tapa extremo) para cable canal 100x50mm","c":2,"u":"Un"},
-     {"n":"Tubo rígido PVC Ø32 apto intemperie","c":12,"u":"Un"},
-     {"n":"Conector para tubo rígido PVC Ø32","c":30,"u":"Un"},
-     {"n":"Curva para tubo rígido PVC Ø32","c":25,"u":"Un"},
-     {"n":"Cupla para tubo rígido PVC Ø32","c":10,"u":"Un"},
-     {"n":"Grampa para tubo rígido PVC Ø32","c":30,"u":"Un"},
-     {"n":"Tubo rígido PVC Ø25 apto intemperie","c":12,"u":"Un"},
-     {"n":"Conector para tubo rígido PVC Ø25","c":30,"u":"Un"},
-     {"n":"Curva para tubo rígido PVC Ø25","c":25,"u":"Un"},
-     {"n":"Cupla para tubo rígido PVC Ø25","c":6,"u":"Un"},
-     {"n":"Grampa para tubo rígido PVC Ø25","c":30,"u":"Un"},
-     {"n":"Caja estanca PVC 165x165x110","c":3,"u":"Un"},
-     {"n":"Caja estanca PVC 210x210x110","c":2,"u":"Un"}]},
-   {"cat":"Usos varios obra","items":[
-     {"n":"Terminal preaislado para cable 6mm2, orificio 3/16\"","c":100,"u":"Un"},
-     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2 1/2\"","c":100,"u":"Un"},
-     {"n":"Arandela vulcanizada (sello de goma) 1/4 (14)","c":100,"u":"Un"},
-     {"n":"Tornillos punta mecha Phillips 8 x 3/4\"","c":100,"u":"Un"},
-     {"n":"Tornillo tipo Fix 4.5 x 35mm cabeza Phillips","c":100,"u":"Un"},
-     {"n":"Tarugos tipo Fischer SX6 o UX6","c":100,"u":"Un"},
-     {"n":"Precintos 4.8 x 200 mm","c":200,"u":"Un"},
-     {"n":"Cinta aisladora PVC 19mm x 20m","c":3,"u":"Un"}]}
-  ],
-  "almacen": [
-   {"cat":"Equipos","items":[
-     {"n":"Batería litio LFP 5 kWh","c":1,"u":"Un"},
-     {"n":"Inversor/cargador UPS solar","c":1,"u":"Un"},
-     {"n":"Tablero de transferencia automática","c":1,"u":"Un"}]},
-   {"cat":"Tablero de CA","items":[
-     {"n":"Interruptor termomagnético bipolar IN 40A, 2 polos","c":2,"u":"Un"},
-     {"n":"Interruptor diferencial bipolar IN 63A, sens 300mA","c":1,"u":"Un"},
-     {"n":"Llave conmutadora 63A 2 polos, I-0-II","c":1,"u":"Un"},
-     {"n":"Gabinete PVC 12 bocas con riel DIN, tapa transparente","c":1,"u":"Un"}]},
-   {"cat":"Cables","items":[
-     {"n":"Cable para baterías 10mm2 negro","c":5,"u":"Un"},
-     {"n":"Cable para baterías 10mm2 rojo","c":5,"u":"Un"},
-     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":30,"u":"Mts"}]},
-   {"cat":"Puesta a tierra","items":[
-     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"},
-     {"n":"Borne de puesta a tierra 6 mm², Zoloda","c":4,"u":"Un"}]},
-   {"cat":"Varios","items":[
-     {"n":"Terminal preaislado para cable 6mm2","c":30,"u":"Un"},
-     {"n":"Precintos 4.8 x 200 mm","c":100,"u":"Un"},
-     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"}]}
-  ],
-  "rossi": [
-   {"cat":"Equipos","items":[
-     {"n":"Inversor on-grid Growatt MOD 11k (con dongle WiFi)","c":1,"u":"Un"},
-     {"n":"Meter con anillos 100A - Growatt CT-E","c":1,"u":"Un"}]},
-   {"cat":"Soportes","items":[
-     {"n":"Barral de montaje Chiko 4,2m (CK-43R 4200)","c":11,"u":"Un"},
-     {"n":"End Clamps Chiko (CK-FTE-40)","c":22,"u":"Un"},
-     {"n":"Mid Clamps Chiko (CK-FTM-40)","c":34,"u":"Un"},
-     {"n":"Hooks Chiko (CK-FTH-013)","c":44,"u":"Un"},
-     {"n":"Ground lugs Chiko (CK-GTC-R2)","c":11,"u":"Un"}]},
-   {"cat":"Tablero de CA","items":[
-     {"n":"Interruptor termomagnético tetrapolar IN 40A, 4 polos","c":1,"u":"Un"},
-     {"n":"Interruptor diferencial tetrapolar IN 40A, sens 300mA","c":1,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 380Vac, 40kA","c":1,"u":"Un"},
-     {"n":"Tablero de sobreponer PVC 24 mód DIN con riel","c":1,"u":"Un"},
-     {"n":"Conectores MC4 macho","c":16,"u":"Un"},
-     {"n":"Conectores MC4 hembra","c":16,"u":"Un"}]},
-   {"cat":"Tablero de CC","items":[
-     {"n":"Termomagnética CC 550V 40A","c":2,"u":"Un"},
-     {"n":"Protector de descargas tipo II, 500Vcc, 40kA","c":2,"u":"Un"},
-     {"n":"Tablero de sobreponer PVC 18 mód DIN con riel","c":1,"u":"Un"}]},
-   {"cat":"Cables","items":[
-     {"n":"Cable solar 1x6mm2 negro","c":150,"u":"Mts"},
-     {"n":"Cable solar 1x6mm2 rojo","c":150,"u":"Mts"},
-     {"n":"Cable unipolar 6mm2 verde y amarillo (tierra)","c":60,"u":"Mts"}]},
-   {"cat":"Puesta a tierra","items":[
-     {"n":"Jabalina de puesta a tierra 1/2\" x 1,5mt con tapa y toma cable","c":1,"u":"Un"}]},
-   {"cat":"Varios","items":[
-     {"n":"Tornillos hexagonal arandelada punta mecha 14 x 2,5\"","c":100,"u":"Un"},
-     {"n":"Precintos 4.8 x 200 mm","c":150,"u":"Un"},
-     {"n":"Cinta aisladora PVC 19mm x 20m","c":2,"u":"Un"}]}
-  ]
- }
+
+<!-- ============================================================
+     SUPABASE SDK
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN SUPABASE
+// ============================================================
+const SUPABASE_URL = 'https://mdovqpblzflictxreajz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_woFfvS4AyhJtAa7GjUwuIw_QlkzA61y';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============================================================
+//  ESTADO GLOBAL — se llena desde Supabase al cargar
+// ============================================================
+let DB = {
+  today: new Date().toISOString().slice(0,10),
+  installer: { nombre: 'Cargando...', iniciales: '...' },
+  installations: [],
+  materials: {}
+};
+
+// Herramientas fijas (igual que antes)
+const HERRAMIENTAS_FIJAS = { cat:"Herramientas", items:[
+  {n:"Escalera extensible (2 cuerpos)"},
+  {n:"Arnés de seguridad + eslinga"},
+  {n:"Casco, lentes y guantes de trabajo"},
+  {n:"Guantes dieléctricos"},
+  {n:"Soga para izar materiales al techo"},
+  {n:"Atornillador/taladro de impacto + baterías"},
+  {n:"Amoladora angular"},
+  {n:"Pistola de calor (termocontraíbles)"},
+  {n:"Juego de destornilladores (Phillips y planos)"},
+  {n:"Juego de llaves combinadas + Allen"},
+  {n:"Llave dinamométrica"},
+  {n:"Pinzas (punta, corte y universal)"},
+  {n:"Pinza pelacables"},
+  {n:"Maza (para la jabalina de tierra)"},
+  {n:"Arco de sierra (caños PVC)"},
+  {n:"Pasacables / sonda"},
+  {n:"Trincheta, cinta métrica y nivel"},
+  {n:"Pistola para sellador"},
+  {n:"Crimpadora MC4 + llave MC4"},
+  {n:"Crimpadora de terminales"},
+  {n:"Multímetro / pinza amperométrica (CC)"},
+  {n:"Detector de tensión"}
+]};
+
+// ============================================================
+//  CARGA INICIAL DESDE SUPABASE
+// ============================================================
+async function cargarDatos() {
+  mostrarCargando(true);
+
+  try {
+    // 1. Cargar obras del mes actual
+    const hoy = new Date();
+    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString();
+    const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59).toISOString();
+
+    const { data: obras, error: errorObras } = await supabase
+      .from('obras')
+      .select('*')
+      .gte('fecha', primerDiaMes)
+      .lte('fecha', ultimoDiaMes)
+      .order('fecha', { ascending: true });
+
+    if (errorObras) throw errorObras;
+
+    // 2. Cargar materiales de esas obras
+    const obraIds = (obras || []).map(o => o.id);
+    let materialesMap = {};
+
+    if (obraIds.length > 0) {
+      const { data: mats, error: errorMats } = await supabase
+        .from('materiales')
+        .select('*')
+        .in('obra_id', obraIds)
+        .order('categoria')
+        .order('nombre');
+
+      if (errorMats) throw errorMats;
+
+      // Agrupar materiales por obra_id y categoría
+      (mats || []).forEach(m => {
+        if (!materialesMap[m.obra_id]) materialesMap[m.obra_id] = {};
+        if (!materialesMap[m.obra_id][m.categoria]) materialesMap[m.obra_id][m.categoria] = [];
+        materialesMap[m.obra_id][m.categoria].push({ n: m.nombre, c: m.cantidad, u: m.unidad });
+      });
+    }
+
+    // 3. Transformar al formato que espera la app
+    DB.installations = (obras || []).map(o => {
+      const fechaObj = new Date(o.fecha);
+      const esHoy = fechaObj.toISOString().slice(0,10) === DB.today;
+
+      // Construir grupos de materiales para esta obra
+      const grupos = {};
+      if (materialesMap[o.id]) {
+        Object.entries(materialesMap[o.id]).forEach(([cat, items]) => {
+          grupos[cat] = items;
+        });
+      }
+      DB.materials[o.id] = Object.entries(grupos).map(([cat, items]) => ({ cat, items }));
+
+      return {
+        id: o.id,
+        cliente: o.cliente,
+        sistema: o.sistema,
+        potencia: o.potencia,
+        kit: o.kit,
+        kclass: o.kclass,
+        fecha: o.fecha,
+        fechaTxt: esHoy ? 'Hoy' : formatFechaTxt(fechaObj),
+        hora: o.hora,
+        dir: o.direccion,
+        loc: o.localidad,
+        lat: parseFloat(o.lat),
+        lon: parseFloat(o.lon),
+        confirmada: o.confirmada,
+        mats: o.id   // usamos el UUID como clave de materiales
+      };
+    });
+
+    // 4. Si no hay obras en Supabase todavía, cargar datos de demo
+    if (DB.installations.length === 0) {
+      cargarDatosDemo();
+    }
+
+  } catch(err) {
+    console.error('Error cargando desde Supabase:', err);
+    // Fallback a datos locales de demo si falla la conexión
+    cargarDatosDemo();
+    mostrarBannerOffline();
+  }
+
+  mostrarCargando(false);
+  renderHome();
+}
+
+function formatFechaTxt(fecha) {
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${dias[fecha.getDay()]} ${fecha.getDate()} ${meses[fecha.getMonth()]}`;
+}
+
+// ============================================================
+//  DATOS DE DEMO (fallback si Supabase está vacío o sin conexión)
+// ============================================================
+function cargarDatosDemo() {
+  DB.installer = { nombre: 'Carlos Ferreyra', iniciales: 'CF' };
+  DB.installations = [
+    { id:"demo-maidana", cliente:"Familia Maidana (DEMO)", sistema:"Sistema híbrido (paneles + baterías)", potencia:"23 kWp", kit:"Kit C", kclass:"k-c",
+      fecha: DB.today + "T09:00", fechaTxt:"Hoy", hora:"09:00",
+      dir:"Av. Mariano Castex 1450", loc:"Canning, Buenos Aires", lat:-34.8688, lon:-58.5159,
+      confirmada:true, mats:"demo-maidana" },
+    { id:"demo-rossi", cliente:"Familia Rossi (DEMO)", sistema:"On-grid (sin baterías)", potencia:"11,5 kWp", kit:"Kit A", kclass:"k-a",
+      fecha: DB.today + "T11:00", fechaTxt:"Hoy", hora:"11:00",
+      dir:"Colectora Este 2200", loc:"Escobar, Buenos Aires", lat:-34.3487, lon:-58.7937,
+      confirmada:false, mats:"demo-rossi" }
+  ];
+  DB.materials["demo-maidana"] = [
+    {cat:"Equipos", items:[{n:"Growatt SPF5000",c:2,u:"Un"},{n:"Batería AXE 5.0L",c:2,u:"Un"},{n:"Growatt MOD 10k",c:1,u:"Un"}]},
+    {cat:"Cables", items:[{n:"Cable solar 1x6mm2 negro",c:200,u:"Mts"},{n:"Cable solar 1x6mm2 rojo",c:200,u:"Mts"}]}
+  ];
+  DB.materials["demo-rossi"] = [
+    {cat:"Equipos", items:[{n:"Inversor on-grid Growatt MOD 11k",c:1,u:"Un"},{n:"Meter con anillos 100A",c:1,u:"Un"}]},
+    {cat:"Soportes", items:[{n:"Barral de montaje Chiko 4,2m",c:11,u:"Un"},{n:"End Clamps Chiko",c:22,u:"Un"}]}
+  ];
+}
+
+function mostrarCargando(activo) {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.style.display = activo ? 'flex' : 'none';
+}
+
+function mostrarBannerOffline() {
+  const banner = document.getElementById('offline-banner');
+  if (banner) banner.style.display = 'flex';
+}
+
+// ============================================================
+//  GUARDAR JORNADA EN SUPABASE
+// ============================================================
+async function guardarInicioJornada(obraId) {
+  // Solo guardar si es un ID real de Supabase (UUID), no demo
+  if (obraId.startsWith('demo-')) return;
+  try {
+    // Buscar si ya existe jornada para esta obra
+    const { data: existente } = await supabase
+      .from('jornadas')
+      .select('id')
+      .eq('obra_id', obraId)
+      .single();
+
+    if (existente) {
+      await supabase.from('jornadas').update({ iniciada_at: new Date().toISOString() }).eq('id', existente.id);
+    } else {
+      await supabase.from('jornadas').insert({ obra_id: obraId, iniciada_at: new Date().toISOString() });
+    }
+  } catch(err) {
+    console.warn('No se pudo guardar inicio en Supabase (se guardó localmente):', err);
+  }
+}
+
+async function guardarFinJornada(obraId) {
+  if (obraId.startsWith('demo-')) return;
+  try {
+    const { data: existente } = await supabase
+      .from('jornadas')
+      .select('id')
+      .eq('obra_id', obraId)
+      .single();
+
+    if (existente) {
+      await supabase.from('jornadas').update({ finalizada_at: new Date().toISOString() }).eq('id', existente.id);
+    }
+  } catch(err) {
+    console.warn('No se pudo guardar fin en Supabase (se guardó localmente):', err);
+  }
+}
+
+// ============================================================
+//  GUARDAR DESVIACIÓN EN SUPABASE
+// ============================================================
+async function guardarDesviacion(obraId, categoria, descripcion) {
+  if (obraId.startsWith('demo-')) return;
+  try {
+    await supabase.from('desviaciones').insert({
+      obra_id: obraId,
+      categoria,
+      descripcion
+    });
+  } catch(err) {
+    console.warn('No se pudo guardar desviación en Supabase:', err);
+  }
+}
+
+async function eliminarDesviacion(obraId, index) {
+  if (obraId.startsWith('demo-')) return;
+  // En la versión actual las desviaciones se identifican por índice local.
+  // En una versión futura se puede guardar el UUID de cada desviación.
+}
+
+// ============================================================
+//  GUARDAR FOTO EN SUPABASE STORAGE
+// ============================================================
+async function subirFotoSupabase(obraId, dataUrl, index) {
+  if (obraId.startsWith('demo-')) return null;
+  try {
+    // Convertir dataUrl a Blob
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const path = `${obraId}/foto_${Date.now()}_${index}.jpg`;
+
+    const { error: errStorage } = await supabase.storage
+      .from('fotos-obras')
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+
+    if (errStorage) throw errStorage;
+
+    // Registrar en tabla fotos
+    await supabase.from('fotos').insert({ obra_id: obraId, storage_path: path });
+
+    return path;
+  } catch(err) {
+    console.warn('No se pudo subir foto a Supabase (guardada localmente):', err);
+    return null;
+  }
 }
 </script>
 
 <script>
-const DB = JSON.parse(document.getElementById('data').textContent);
 const TODAY = DB.today;
 // ---------- iconos (SVG de línea, currentColor) ----------
 const ICONS = {
@@ -559,34 +612,13 @@ const CAT_IC = {
   "Cables":"wave","Canalizaciones":"pipes","Bandejas pasacables":"pipes","Soportes":"tool",
   "Puesta a tierra":"ground","Varios":"kit","Usos varios obra":"kit","Herramientas":"toolbox"
 };
-// ---------- Herramientas: misma caja en todas las obras (versión recortada) ----------
-const HERRAMIENTAS = { cat:"Herramientas", items:[
-  {n:"Escalera extensible (2 cuerpos)"},
-  {n:"Arnés de seguridad + eslinga"},
-  {n:"Casco, lentes y guantes de trabajo"},
-  {n:"Guantes dieléctricos"},
-  {n:"Soga para izar materiales al techo"},
-  {n:"Atornillador/taladro de impacto + baterías"},
-  {n:"Amoladora angular"},
-  {n:"Pistola de calor (termocontraíbles)"},
-  {n:"Juego de destornilladores (Phillips y planos)"},
-  {n:"Juego de llaves combinadas + Allen"},
-  {n:"Llave dinamométrica"},
-  {n:"Pinzas (punta, corte y universal)"},
-  {n:"Pinza pelacables"},
-  {n:"Maza (para la jabalina de tierra)"},
-  {n:"Arco de sierra (caños PVC)"},
-  {n:"Pasacables / sonda"},
-  {n:"Trincheta, cinta métrica y nivel"},
-  {n:"Pistola para sellador"},
-  {n:"Crimpadora MC4 + llave MC4"},
-  {n:"Crimpadora de terminales"},
-  {n:"Multímetro / pinza amperométrica (CC)"},
-  {n:"Detector de tensión"}
-]};
-function obraGroups(matKey){ return DB.materials[matKey].concat([HERRAMIENTAS]); }
-// ---------- check state (persisted offline) ----------
-const checks = loadChecks(); // id -> Set of "cat|i"
+
+function obraGroups(matKey){
+  return (DB.materials[matKey] || []).concat([HERRAMIENTAS_FIJAS]);
+}
+
+// ---------- check state (persistido offline con localStorage) ----------
+const checks = loadChecks();
 function loadChecks(){
   try{
     const raw = localStorage.getItem('alp_checks');
@@ -603,7 +635,8 @@ function saveChecks(){
     localStorage.setItem('alp_checks', JSON.stringify(o));
   }catch(e){}
 }
-// ---------- toast (con deshacer) ----------
+
+// ---------- toast ----------
 let toastTimer;
 function showToast(msg, undoFn){
   const t = document.getElementById('toast');
@@ -614,8 +647,8 @@ function showToast(msg, undoFn){
 }
 function hideToast(){ document.getElementById('toast').classList.remove('show'); }
 
-// ---------- registro de obra: tiempos, desviaciones, fotos (persistido) ----------
-const obras = loadObras(); // id -> {startedAt, finishedAt, desv:[{cat,txt}], fotos:[{data,caption}]}
+// ---------- registro de obra (persistido localmente + sincronizado con Supabase) ----------
+const obras = loadObras();
 function loadObras(){ try{ return JSON.parse(localStorage.getItem('alp_obras')||'{}'); }catch(e){ return {}; } }
 function saveObras(){ try{ localStorage.setItem('alp_obras', JSON.stringify(obras)); return true; }catch(e){ return false; } }
 function obraState(id){ if(!obras[id]) obras[id]={startedAt:null,finishedAt:null,desv:[],fotos:[]}; return obras[id]; }
@@ -625,18 +658,37 @@ function fmtTime(iso){ const d=new Date(iso); return String(d.getHours()).padSta
 function fmtDur(a,b){ let m=Math.max(0,Math.round((new Date(b)-new Date(a))/60000)); const h=Math.floor(m/60); m=m%60; return (h?h+'h ':'')+m+'min'; }
 function nowISO(){ return new Date().toISOString(); }
 
-function iniciarObra(id){ const o=obraState(id); o.startedAt=nowISO(); o.finishedAt=null; saveObras(); renderEstado(id); renderCierre(id); }
-function finalizarObra(id){ const o=obraState(id); if(!o.startedAt) o.startedAt=nowISO(); o.finishedAt=nowISO(); saveObras(); renderEstado(id); renderCierre(id); renderHome();
-  const c=document.getElementById('cierre'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'}); }
+// Inicio/fin de obra — guarda local Y en Supabase
+function iniciarObra(id){
+  const o=obraState(id);
+  o.startedAt=nowISO(); o.finishedAt=null;
+  saveObras();
+  guardarInicioJornada(id); // Supabase async (no bloquea)
+  renderEstado(id); renderCierre(id);
+}
+function finalizarObra(id){
+  const o=obraState(id);
+  if(!o.startedAt) o.startedAt=nowISO();
+  o.finishedAt=nowISO();
+  saveObras();
+  guardarFinJornada(id); // Supabase async
+  renderEstado(id); renderCierre(id); renderHome();
+  const c=document.getElementById('cierre'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
+}
 function reabrirObra(id){ const o=obraState(id); o.finishedAt=null; saveObras(); renderEstado(id); renderHome(); }
 
 const DESV_CATS = ['Material de más','Material de menos','Problema en techo','Demora de acceso','Otro'];
 function desvClass(cat){ return cat==='Material de más'?'mas':cat==='Material de menos'?'menos':cat==='Otro'?'otro':'prob'; }
+
 function addDesv(id){
   const sel=document.getElementById('dvCat'), inp=document.getElementById('dvTxt');
   const txt=(inp.value||'').trim(); if(!txt){ inp.focus(); return; }
-  obraState(id).desv.push({cat:sel.value, txt});
-  saveObras(); renderCierre(id);
+  const cat = sel.value;
+  obraState(id).desv.push({cat, txt});
+  saveObras();
+  guardarDesviacion(id, cat, txt); // Supabase async
+  inp.value = '';
+  renderCierre(id);
 }
 function removeDesv(id,i){ obraState(id).desv.splice(i,1); saveObras(); renderCierre(id); }
 
@@ -652,8 +704,11 @@ function addFoto(id, input){
       if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
       const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
       cv.getContext('2d').drawImage(img,0,0,w,h);
-      o.fotos.push({data:cv.toDataURL('image/jpeg',0.7), caption:''});
-      if(!saveObras()){ o.fotos.pop(); showToast('No hay más espacio para fotos en este teléfono.'); }
+      const dataUrl = cv.toDataURL('image/jpeg',0.7);
+      const idx = o.fotos.length;
+      o.fotos.push({data: dataUrl, caption:''});
+      if(!saveObras()){ o.fotos.pop(); showToast('No hay más espacio para fotos en este teléfono.'); return; }
+      subirFotoSupabase(id, dataUrl, idx); // Supabase async
       renderCierre(id);
     };
     img.src=e.target.result;
@@ -728,7 +783,7 @@ function filterList(f){
     if(f==="semana") return within(x.fecha,6);
     return sameMonth(x.fecha);
   });
-  arr.sort((a,b)=> a.fecha.localeCompare(b.fecha)); // próximas primero
+  arr.sort((a,b)=> a.fecha.localeCompare(b.fecha));
   return arr;
 }
 function totalItems(matKey){
@@ -742,6 +797,10 @@ const countLbl = document.getElementById('countlbl');
 let curFilter = "dia";
 
 function renderHome(){
+  // Actualizar nombre del instalador
+  document.getElementById('uname').textContent = DB.installer.nombre;
+  document.getElementById('avatar').textContent = DB.installer.iniciales;
+
   const arr = filterList(curFilter);
   countEl.textContent = arr.length;
   countLbl.textContent = arr.length===1 ? "instalación" : "instalaciones";
@@ -883,7 +942,6 @@ function fullDate(iso){
 
 function toggleItem(id, cat, ii, el){
   const key = cat+"|"+ii;
-  // match against real cat key (cat may have had quotes stripped, but ours have none)
   if(checks[id].has(key)) checks[id].delete(key); else checks[id].add(key);
   el.classList.toggle('done');
   el.querySelector('.cbx').textContent = el.classList.contains('done') ? '✓' : '';
@@ -909,7 +967,7 @@ function markAll(id){
   const x = DB.installations.find(i=>i.id===id);
   const groups = obraGroups(x.mats);
   const allDone = checks[id].size >= totalFor(id);
-  const prev = new Set(checks[id]);          // para deshacer
+  const prev = new Set(checks[id]);
   checks[id] = new Set();
   if(!allDone){
     groups.forEach(g=> g.items.forEach((_,ii)=> checks[id].add(g.cat+"|"+ii)));
@@ -917,7 +975,7 @@ function markAll(id){
     showToast('Se desmarcó todo.', ()=>{ checks[id] = prev; saveChecks(); openDetail(id); });
   }
   saveChecks();
-  openDetail(id); // re-render with state
+  openDetail(id);
 }
 
 function closeDetail(){
@@ -925,10 +983,10 @@ function closeDetail(){
   document.getElementById('home').classList.remove('hide-left');
 }
 
-// init
-document.getElementById('uname').textContent = DB.installer.nombre;
-document.getElementById('avatar').textContent = DB.installer.iniciales;
-renderHome();
+// ============================================================
+//  ARRANQUE — cargar datos desde Supabase
+// ============================================================
+cargarDatos();
 </script>
 </body>
 </html>
