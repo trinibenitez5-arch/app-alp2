@@ -476,7 +476,12 @@ async function cargarObra() {
   if(!dir) return showStatus('error', '❌ Completá la dirección.');
   if(!loc) return showStatus('error', '❌ Completá la localidad.');
 
+  // Leer valores editados del paso 2
+  const clienteEdit = document.getElementById('prevCliente').value.trim() || parsedData.cliente;
+  const potenciaEdit = document.getElementById('prevPotencia').value.trim() || parsedData.potencia;
+  const sistemaEdit = document.getElementById('prevSistema').value;
   const ki = kitInfo(selectedKit);
+  ki.sistema = sistemaEdit;
   const btn = document.getElementById('btnCargar');
   btn.disabled = true;
   showStatus('loading', '⏳ Creando obra en Supabase...');
