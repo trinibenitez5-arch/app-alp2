@@ -148,23 +148,60 @@
 
   <!-- PASO 2: PREVIEW -->
   <div class="card" id="previewCard" style="display:none">
-    <div class="card-title"><span class="num">2</span> Datos leídos del Excel</div>
+    <div class="card-title"><span class="num">2</span> Datos leídos del Excel <span style="font-size:12px;font-weight:600;color:var(--muted);margin-left:4px">— editables si hay errores</span></div>
+
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px">
-      <div class="preview-box">
-        <div class="preview-label">Cliente</div>
-        <div class="preview-val" id="prevCliente">—</div>
+      <div class="field">
+        <label>Cliente</label>
+        <input type="text" id="prevCliente" placeholder="Nombre del cliente"/>
       </div>
-      <div class="preview-box">
-        <div class="preview-label">Potencia</div>
-        <div class="preview-val" id="prevPotencia">—</div>
-        <div class="preview-sub" id="prevSistema">—</div>
+      <div class="field">
+        <label>Potencia</label>
+        <input type="text" id="prevPotencia" placeholder="Ej: 23 kWp"/>
       </div>
     </div>
-    <div class="preview-box">
+
+    <div class="field" style="margin-bottom:12px">
+      <label>Sistema</label>
+      <select id="prevSistema">
+        <option value="Sistema híbrido (paneles + baterías)">Sistema híbrido (paneles + baterías)</option>
+        <option value="On-grid (sin baterías)">On-grid (sin baterías)</option>
+        <option value="Respaldo energético (solo baterías)">Respaldo energético (solo baterías)</option>
+        <option value="Sistema solar">Sistema solar</option>
+      </select>
+    </div>
+
+    <div class="preview-box" style="margin-bottom:10px">
       <div class="preview-label">Materiales detectados</div>
       <div class="mats-summary" id="matsSummary"></div>
     </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px">
+      <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px">Lista de materiales</span>
+      <button onclick="toggleEditMats()" id="btnEditMats" style="border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer">✏️ Editar</button>
+    </div>
     <div class="items-list" id="itemsList"></div>
+
+    <!-- Editor de materiales (oculto por defecto) -->
+    <div id="matsEditor" style="display:none;margin-top:12px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Podés eliminar ítems incorrectos o agregar nuevos.</div>
+      <div id="matsEditorList"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;margin-top:10px;align-items:end">
+        <div class="field"><label>Descripción</label><input type="text" id="newDesc" placeholder="Nombre del material"/></div>
+        <div class="field"><label>Cantidad</label><input type="number" id="newCant" placeholder="0" min="0"/></div>
+        <div class="field"><label>Unidad</label>
+          <select id="newUn"><option>Un</option><option>Mts</option><option>Kg</option></select>
+        </div>
+        <div class="field"><label>Categoría</label>
+          <select id="newCat">
+            <option>Equipos</option><option>Tablero de CA</option><option>Tablero de CC</option>
+            <option>Cables</option><option>Canalizaciones</option><option>Soportes</option>
+            <option>Varios</option><option>Puesta a tierra</option><option>Servicios</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="agregarItem()" style="margin-top:8px;width:100%;border:0;background:var(--blue-l);color:#1e40af;font-weight:700;font-size:13px;padding:10px;border-radius:10px;cursor:pointer">+ Agregar ítem</button>
+    </div>
   </div>
 
   <!-- PASO 3: COMPLETAR DATOS -->
@@ -329,30 +366,77 @@ function parseExcel(rows) {
 }
 
 function showPreview(data) {
-  document.getElementById('prevCliente').textContent = data.cliente || '(no encontrado)';
-  document.getElementById('prevPotencia').textContent = data.potencia || '(no encontrado)';
-  document.getElementById('prevSistema').textContent = data.sistema;
+  document.getElementById('prevCliente').value = data.cliente || '';
+  document.getElementById('prevPotencia').value = data.potencia || '';
+  const sel = document.getElementById('prevSistema');
+  for(let opt of sel.options) {
+    if(opt.value === data.sistema) { opt.selected = true; break; }
+  }
+  renderMatsSummary();
+  renderItemsList();
+  document.getElementById('previewCard').style.display = 'block';
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('fFecha').value = new Date().toISOString().slice(0,10);
+}
 
-  // Resumen por categoría
+function renderMatsSummary() {
   const catCount = {};
-  data.items.forEach(i => { catCount[i.cat] = (catCount[i.cat]||0) + 1; });
+  parsedData.items.forEach(i => { catCount[i.cat] = (catCount[i.cat]||0) + 1; });
   document.getElementById('matsSummary').innerHTML =
     Object.entries(catCount).map(([cat, n]) =>
       `<span class="mat-chip">${cat} (${n})</span>`).join('');
+}
 
-  // Lista de ítems
-  document.getElementById('itemsList').innerHTML = data.items.map(i =>
+function renderItemsList() {
+  document.getElementById('itemsList').innerHTML = parsedData.items.map((i, idx) =>
     `<div class="item-row">
       <span class="item-cat">${i.cat}</span>
       <span class="item-name">${i.nombre}</span>
       <span class="item-qty">${i.cantidad} ${i.unidad}</span>
     </div>`).join('');
+}
 
-  document.getElementById('previewCard').style.display = 'block';
-  document.getElementById('formCard').style.display = 'block';
+function renderMatsEditor() {
+  document.getElementById('matsEditorList').innerHTML = parsedData.items.map((i, idx) =>
+    `<div class="item-row" id="erow-${idx}" style="gap:6px">
+      <span class="item-cat" style="cursor:default">${i.cat}</span>
+      <span class="item-name" style="font-size:13px">${i.nombre}</span>
+      <span class="item-qty">${i.cantidad} ${i.unidad}</span>
+      <button onclick="eliminarItem(${idx})" style="border:0;background:none;color:#dc2626;cursor:pointer;font-size:16px;flex:none;padding:0 4px" title="Eliminar">&#x2715;</button>
+    </div>`).join('');
+}
 
-  // Fecha de hoy por defecto
-  document.getElementById('fFecha').value = new Date().toISOString().slice(0,10);
+function toggleEditMats() {
+  const ed = document.getElementById('matsEditor');
+  const btn = document.getElementById('btnEditMats');
+  const visible = ed.style.display !== 'none';
+  ed.style.display = visible ? 'none' : 'block';
+  btn.textContent = visible ? '✏️ Editar' : '✓ Cerrar editor';
+  if(!visible) renderMatsEditor();
+}
+
+function eliminarItem(idx) {
+  parsedData.items.splice(idx, 1);
+  renderMatsSummary();
+  renderItemsList();
+  renderMatsEditor();
+}
+
+function agregarItem() {
+  const desc = document.getElementById('newDesc').value.trim();
+  const cant = parseFloat(document.getElementById('newCant').value);
+  const un = document.getElementById('newUn').value;
+  const cat = document.getElementById('newCat').value;
+  if(!desc || isNaN(cant) || cant <= 0) {
+    alert('Completá descripción y cantidad válida.');
+    return;
+  }
+  parsedData.items.push({ cat, nombre: desc, cantidad: cant, unidad: un });
+  document.getElementById('newDesc').value = '';
+  document.getElementById('newCant').value = '';
+  renderMatsSummary();
+  renderItemsList();
+  renderMatsEditor();
 }
 
 function selectKit(k) {
@@ -402,9 +486,9 @@ async function cargarObra() {
     const { data: obra, error: errObra } = await sbClient
       .from('obras')
       .insert({
-        cliente: parsedData.cliente,
+        cliente: clienteEdit,
         sistema: ki.sistema,
-        potencia: parsedData.potencia,
+        potencia: potenciaEdit,
         kit: ki.kit,
         kclass: ki.kclass,
         fecha: fecha + 'T' + hora + ':00',
@@ -439,7 +523,7 @@ async function cargarObra() {
     }
 
     showStatus('success',
-      `✅ ¡Obra creada! "${parsedData.cliente}" aparece ahora en la app del instalador con ${parsedData.items.length} materiales cargados.`);
+      `✅ ¡Obra creada! "${clienteEdit}" aparece ahora en la app del instalador con ${parsedData.items.length} materiales cargados.`);
 
     btn.textContent = '✓ Obra creada correctamente';
 
