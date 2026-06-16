@@ -514,8 +514,9 @@ async function onLoginSuccess(user, fallbackData) {
   } else {
     nombre = user.email.split('@')[0]; iniciales = nombre.slice(0,2).toUpperCase();
   }
-  DB.installer = { nombre, iniciales, id: instaladorId };
-  localStorage.setItem('alp_session', JSON.stringify({ email: user.email, nombre, iniciales, id: instaladorId }));
+  // Usar el UUID de Auth directamente para filtrar obras
+  DB.installer = { nombre, iniciales, id: instaladorId, authId: user.id };
+  localStorage.setItem('alp_session', JSON.stringify({ email: user.email, nombre, iniciales, id: instaladorId, authId: user.id }));
   // Ocultar login, mostrar home
   document.getElementById('screenLogin').classList.add('hide-right');
   document.getElementById('screenRegister').classList.add('hide-right');
@@ -536,7 +537,7 @@ async function checkSession() {
     // Restaurar id desde localStorage si existe
     try {
       const saved = JSON.parse(localStorage.getItem('alp_session') || '{}');
-      if(saved.id) DB.installer = { nombre: saved.nombre || '', iniciales: saved.iniciales || '', id: saved.id };
+      if(saved.id) DB.installer = { nombre: saved.nombre || '', iniciales: saved.iniciales || '', id: saved.id, authId: saved.authId };
     } catch(e) {}
     await onLoginSuccess(session.user);
   } else {
@@ -596,6 +597,8 @@ async function cargarDatos() {
     const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
     // Filtrar obras por instalador logueado
+    console.log('DB.installer al cargar:', JSON.stringify(DB.installer));
+    
     let query = sbClient
       .from('obras')
       .select('*')
@@ -604,8 +607,11 @@ async function cargarDatos() {
       .order('fecha', { ascending: true });
 
     // Si el instalador tiene ID, mostrar solo sus obras
-    if(DB.installer.id) {
+    if(DB.installer && DB.installer.id) {
+      console.log('Filtrando por instalador_id:', DB.installer.id);
       query = query.eq('instalador_id', DB.installer.id);
+    } else {
+      console.log('Sin ID de instalador - mostrando todas las obras');
     }
 
     const { data: obras, error: errorObras } = await query;
