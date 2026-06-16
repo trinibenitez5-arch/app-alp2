@@ -107,6 +107,38 @@
   .item-name{flex:1; color:var(--ink)}
   .item-qty{font-weight:700; color:var(--green-d); white-space:nowrap}
 
+
+  /* ── TABS ─────────────────────────────── */
+  .tabs{display:flex;background:#f1f5f9;border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
+  .tab{flex:1;border:0;background:transparent;border-radius:10px;padding:10px;font-size:14px;
+    font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+  .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(15,23,42,.1)}
+
+  /* ── ASIGNACIONES ─────────────────────── */
+  .obra-assign{border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+    display:flex;flex-direction:column;gap:10px;margin-bottom:10px;background:#fff}
+  .obra-assign-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .obra-cli{font-size:15px;font-weight:700}
+  .obra-meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .obra-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
+  .obra-badge.k-c{background:#dcfce7;color:#15803d}
+  .obra-badge.k-a{background:#dbeafe;color:#1d4ed8}
+  .obra-badge.k-b{background:#fef9c3;color:#92400e}
+  .assign-row{display:flex;gap:8px;align-items:center}
+  .assign-select{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;
+    font-size:14px;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:.15s}
+  .assign-select:focus{border-color:var(--green)}
+  .assign-btn{border:0;background:var(--green);color:#fff;border-radius:10px;padding:10px 16px;
+    font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.15s}
+  .assign-btn:hover{background:var(--green-d)}
+  .assign-btn:disabled{background:#94a3b8;cursor:not-allowed}
+  .assigned-chip{display:flex;align-items:center;gap:6px;background:var(--green-l);
+    border:1px solid #86efac;border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--green-d)}
+  .estado-chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+  .estado-chip.pendiente{background:#f1f5f9;color:var(--muted)}
+  .estado-chip.en_curso{background:#fef9c3;color:#92400e}
+  .estado-chip.finalizada{background:#dcfce7;color:#15803d}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
   @media(max-width:480px){
     .form-grid{grid-template-columns:1fr}
     .kit-grid{grid-template-columns:1fr}
@@ -125,10 +157,19 @@
       <path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/>
     </svg>
     <div class="header-text">
-      <h1>ALP Group · Panel de carga</h1>
-      <p>Cargá una cotización Excel y creá la obra en la app del instalador</p>
+      <h1>ALP Group · Panel de administración</h1>
+      <p>Cargá obras y asignalas a los instaladores</p>
     </div>
   </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" id="tab1" onclick="switchTab(1)">📊 Cargar obra</button>
+    <button class="tab" id="tab2" onclick="switchTab(2)">👷 Asignar instaladores</button>
+  </div>
+
+  <!-- PANEL 1: CARGA -->
+  <div id="panel1">
 
   <!-- PASO 1: SUBIR EXCEL -->
   <div class="card">
@@ -264,7 +305,31 @@
     <div id="statusMsg" style="display:none"></div>
   </div>
 
-</div>
+  </div><!-- /panel1 -->
+
+  <!-- PANEL 2: ASIGNACIONES -->
+  <div id="panel2" style="display:none">
+    <div class="card">
+      <div class="card-title">
+        <span class="num" style="background:var(--blue)">👷</span>
+        Obras sin instalador asignado
+      </div>
+      <div id="obrasSinAsignar">
+        <div class="empty-state">Cargando obras...</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="card-title">
+        <span class="num" style="background:#6366f1">✓</span>
+        Obras asignadas
+      </div>
+      <div id="obrasAsignadas">
+        <div class="empty-state">Cargando...</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
 
 <script>
 const SUPABASE_URL = 'https://mdovqpblzflictxreajz.supabase.co';
@@ -547,6 +612,116 @@ function showStatus(type, msg) {
   el.style.display = 'flex';
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+// ============================================================
+//  TABS
+// ============================================================
+function switchTab(n) {
+  document.getElementById('panel1').style.display = n===1 ? 'block' : 'none';
+  document.getElementById('panel2').style.display = n===2 ? 'block' : 'none';
+  document.getElementById('tab1').classList.toggle('active', n===1);
+  document.getElementById('tab2').classList.toggle('active', n===2);
+  if(n===2) cargarAsignaciones();
+}
+
+// ============================================================
+//  CARGAR OBRAS E INSTALADORES PARA ASIGNACIONES
+// ============================================================
+let instaladoresList = [];
+
+async function cargarAsignaciones() {
+  // 1. Cargar instaladores
+  const { data: insts } = await sbClient.from('instaladores').select('id,nombre').eq('activo', true).order('nombre');
+  instaladoresList = insts || [];
+
+  // 2. Cargar obras
+  const { data: obras } = await sbClient
+    .from('obras')
+    .select('id,cliente,kit,kclass,fecha,hora,localidad,instalador_id')
+    .order('fecha', { ascending: true });
+
+  if(!obras || obras.length === 0) {
+    document.getElementById('obrasSinAsignar').innerHTML = '<div class="empty-state">No hay obras cargadas todavía.</div>';
+    document.getElementById('obrasAsignadas').innerHTML = '<div class="empty-state">No hay obras asignadas.</div>';
+    return;
+  }
+
+  const sinAsignar = obras.filter(o => !o.instalador_id);
+  const asignadas  = obras.filter(o => o.instalador_id);
+
+  // Renderizar sin asignar
+  document.getElementById('obrasSinAsignar').innerHTML = sinAsignar.length === 0
+    ? '<div class="empty-state">✓ Todas las obras tienen instalador asignado.</div>'
+    : sinAsignar.map(o => obraCardHTML(o, false)).join('');
+
+  // Renderizar asignadas
+  if(asignadas.length === 0) {
+    document.getElementById('obrasAsignadas').innerHTML = '<div class="empty-state">Todavía no hay obras asignadas.</div>';
+    return;
+  }
+  // Para las asignadas necesitamos el nombre del instalador
+  const instMap = {};
+  instaladoresList.forEach(i => instMap[i.id] = i.nombre);
+  document.getElementById('obrasAsignadas').innerHTML = asignadas.map(o => obraCardHTML(o, true, instMap[o.instalador_id])).join('');
+}
+
+function fmtFecha(iso) {
+  const d = new Date(iso);
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]} · ${iso.slice(11,16)} hs`;
+}
+
+function obraCardHTML(obra, asignada, nombreInst) {
+  const optsInst = instaladoresList.map(i =>
+    `<option value="${i.id}">${i.nombre}</option>`).join('');
+
+  return `<div class="obra-assign" id="oa-${obra.id}">
+    <div class="obra-assign-top">
+      <div>
+        <div class="obra-cli">${obra.cliente}</div>
+        <div class="obra-meta">${fmtFecha(obra.fecha)} · ${obra.localidad}</div>
+      </div>
+      <span class="obra-badge ${obra.kclass}">${obra.kit}</span>
+    </div>
+    ${asignada
+      ? `<div class="assigned-chip">👷 ${nombreInst || 'Instalador asignado'}
+           <button onclick="desasignar('${obra.id}')" style="margin-left:auto;border:0;background:none;color:#dc2626;cursor:pointer;font-weight:700;font-size:13px">Cambiar</button>
+         </div>`
+      : `<div class="assign-row">
+          <select class="assign-select" id="sel-${obra.id}">
+            <option value="">— Elegí un instalador —</option>
+            ${optsInst}
+          </select>
+          <button class="assign-btn" onclick="asignar('${obra.id}')">Asignar</button>
+        </div>`
+    }
+  </div>`;
+}
+
+async function asignar(obraId) {
+  const sel = document.getElementById('sel-' + obraId);
+  const instId = sel.value;
+  if(!instId) { alert('Elegí un instalador primero.'); return; }
+  sel.disabled = true;
+  const btn = sel.nextElementSibling;
+  btn.disabled = true; btn.textContent = '...';
+
+  const { error } = await sbClient.from('obras').update({ instalador_id: instId }).eq('id', obraId);
+  if(error) {
+    alert('Error al asignar: ' + error.message);
+    sel.disabled = false; btn.disabled = false; btn.textContent = 'Asignar';
+    return;
+  }
+  // Recargar panel
+  cargarAsignaciones();
+}
+
+async function desasignar(obraId) {
+  const { error } = await sbClient.from('obras').update({ instalador_id: null }).eq('id', obraId);
+  if(!error) cargarAsignaciones();
+}
+
 </script>
 </body>
 </html>
