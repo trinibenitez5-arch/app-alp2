@@ -631,7 +631,7 @@ let instaladoresList = [];
 
 async function cargarAsignaciones() {
   // 1. Cargar instaladores
-  const { data: insts } = await sbClient.from('instaladores').select('id,nombre').eq('activo', true).order('nombre');
+  const { data: insts } = await sbClient.from('instaladores').select('id,nombre').order('nombre');
   instaladoresList = insts || [];
 
   // 2. Cargar obras
