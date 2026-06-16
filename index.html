@@ -505,16 +505,18 @@ async function doLogout() {
 async function onLoginSuccess(user, fallbackData) {
   // Obtener nombre del instalador desde la tabla o desde metadata
   let nombre = '', iniciales = '';
-  const { data: inst } = await sbClient.from('instaladores').select('nombre,iniciales').eq('email', user.email).single();
+  const { data: inst } = await sbClient.from('instaladores').select('id,nombre,iniciales').eq('email', user.email).single();
+  let instaladorId = null;
   if(inst) {
-    nombre = inst.nombre; iniciales = inst.iniciales;
+    nombre = inst.nombre; iniciales = inst.iniciales; instaladorId = inst.id;
   } else if(fallbackData) {
     nombre = fallbackData.nombre; iniciales = fallbackData.iniciales;
   } else {
     nombre = user.email.split('@')[0]; iniciales = nombre.slice(0,2).toUpperCase();
   }
-  DB.installer = { nombre, iniciales };
-  localStorage.setItem('alp_session', JSON.stringify({ email: user.email, nombre, iniciales }));
+  // Usar el UUID de Auth directamente para filtrar obras
+  DB.installer = { nombre, iniciales, id: instaladorId, authId: user.id };
+  localStorage.setItem('alp_session', JSON.stringify({ email: user.email, nombre, iniciales, id: instaladorId, authId: user.id }));
   // Ocultar login, mostrar home
   document.getElementById('screenLogin').classList.add('hide-right');
   document.getElementById('screenRegister').classList.add('hide-right');
@@ -532,6 +534,11 @@ async function checkSession() {
   // Verificar sesión activa en Supabase
   const { data: { session } } = await sbClient.auth.getSession();
   if(session) {
+    // Restaurar id desde localStorage si existe
+    try {
+      const saved = JSON.parse(localStorage.getItem('alp_session') || '{}');
+      if(saved.id) DB.installer = { nombre: saved.nombre || '', iniciales: saved.iniciales || '', id: saved.id, authId: saved.authId };
+    } catch(e) {}
     await onLoginSuccess(session.user);
   } else {
     // Sin sesión → mostrar login
@@ -589,12 +596,25 @@ async function cargarDatos() {
     const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString();
     const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-    const { data: obras, error: errorObras } = await sbClient
+    // Filtrar obras por instalador logueado
+    console.log('DB.installer al cargar:', JSON.stringify(DB.installer));
+    
+    let query = sbClient
       .from('obras')
       .select('*')
       .gte('fecha', primerDiaMes)
       .lte('fecha', ultimoDiaMes)
       .order('fecha', { ascending: true });
+
+    // Si el instalador tiene ID, mostrar solo sus obras
+    if(DB.installer && DB.installer.id) {
+      console.log('Filtrando por instalador_id:', DB.installer.id);
+      query = query.eq('instalador_id', DB.installer.id);
+    } else {
+      console.log('Sin ID de instalador - mostrando todas las obras');
+    }
+
+    const { data: obras, error: errorObras } = await query;
 
     if (errorObras) throw errorObras;
 
@@ -1071,20 +1091,13 @@ function openDetail(id){
   if(!checks[id]) checks[id] = new Set();
   const groups = obraGroups(x.mats);
   const total = totalItems(x.mats);
-  const hasCoords = (x.lat != null && x.lon != null && !isNaN(parseFloat(x.lat)) && !isNaN(parseFloat(x.lon)));
-  const destino = [x.dir, x.loc].filter(Boolean).join(', ');
-  const bbox = hasCoords ? [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C') : '';
+  const bbox = [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C');
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${x.lat}%2C${x.lon}`;
-  // "Cómo llegar": coordenadas exactas si las hay; si no, busca por la dirección escrita (nunca falla)
-  const gmaps = hasCoords
-    ? `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destino)}`;
+  const gmaps = `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`;
   const online = navigator.onLine;
-  const mapBlock = (online && hasCoords)
+  const mapBlock = online
     ? `<div class="map"><iframe loading="lazy" src="${mapSrc}"></iframe></div>`
-    : (!online
-      ? `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`
-      : `<div class="map map-off"><span class="mo-t">${icon('pin')} Tocá "Cómo llegar" para abrir el mapa</span><span class="mo-s">${destino}</span></div>`);
+    : `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`;
   const allLoaded = checks[id].size >= total;
 
   const groupsHtml = groups.map((g,gi)=>{
