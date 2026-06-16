@@ -630,18 +630,19 @@ function switchTab(n) {
 let instaladoresList = [];
 
 async function cargarAsignaciones() {
-  // 1. Cargar instaladores
-  const { data: insts, error: errInst } = await sbClient.from('instaladores').select('id,nombre').order('nombre');
-  console.log('instaladores result:', JSON.stringify({data: insts, error: errInst}));
-  instaladoresList = insts || [];
+  document.getElementById('obrasSinAsignar').innerHTML = '<div class="empty-state">Cargando...</div>';
+  document.getElementById('obrasAsignadas').innerHTML = '<div class="empty-state">Cargando...</div>';
 
-  // 2. Cargar obras
-  const { data: obras } = await sbClient
-    .from('obras')
-    .select('id,cliente,kit,kclass,fecha,hora,localidad,instalador_id')
-    .order('fecha', { ascending: true });
+  // 1. Cargar instaladores y obras en paralelo
+  const [resInst, resObras] = await Promise.all([
+    sbClient.from('instaladores').select('id,nombre').order('nombre'),
+    sbClient.from('obras').select('id,cliente,kit,kclass,fecha,hora,localidad,instalador_id').order('fecha', { ascending: true })
+  ]);
 
-  if(!obras || obras.length === 0) {
+  instaladoresList = resInst.data || [];
+  const obras = resObras.data || [];
+
+  if(obras.length === 0) {
     document.getElementById('obrasSinAsignar').innerHTML = '<div class="empty-state">No hay obras cargadas todavía.</div>';
     document.getElementById('obrasAsignadas').innerHTML = '<div class="empty-state">No hay obras asignadas.</div>';
     return;
@@ -656,14 +657,11 @@ async function cargarAsignaciones() {
     : sinAsignar.map(o => obraCardHTML(o, false)).join('');
 
   // Renderizar asignadas
-  if(asignadas.length === 0) {
-    document.getElementById('obrasAsignadas').innerHTML = '<div class="empty-state">Todavía no hay obras asignadas.</div>';
-    return;
-  }
-  // Para las asignadas necesitamos el nombre del instalador
   const instMap = {};
   instaladoresList.forEach(i => instMap[i.id] = i.nombre);
-  document.getElementById('obrasAsignadas').innerHTML = asignadas.map(o => obraCardHTML(o, true, instMap[o.instalador_id])).join('');
+  document.getElementById('obrasAsignadas').innerHTML = asignadas.length === 0
+    ? '<div class="empty-state">Todavía no hay obras asignadas.</div>'
+    : asignadas.map(o => obraCardHTML(o, true, instMap[o.instalador_id])).join('');
 }
 
 function fmtFecha(iso) {
