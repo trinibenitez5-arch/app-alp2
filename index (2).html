@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ALP Group · App Instaladores</title>
+<style>
+  :root{
+    --green:#16a34a; --green-d:#13833d; --green-l:#dcfce7;
+    --sun:#f59e0b; --sun-l:#fef3c7;
+    --bg:#eef1f4; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+    --line:#e6e9ee; --line-2:#f1f4f7;
+    --blue:#2563eb; --blue-l:#dbeafe;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#d7dce2; color:var(--ink); line-height:1.45;
+    display:flex; justify-content:center; min-height:100vh;
+  }
+  /* Phone frame */
+  #app{
+    width:100%; max-width:440px; background:var(--bg); min-height:100vh;
+    position:relative; overflow:hidden;
+  }
+  @media(min-width:480px){
+    body{align-items:center; padding:24px 0}
+    #app{min-height:auto; height:900px; max-height:92vh; border-radius:42px;
+      box-shadow:0 30px 70px rgba(15,23,42,.35); border:10px solid #0f172a; overflow:hidden}
+  }
+  .screen{position:absolute; inset:0; display:flex; flex-direction:column;
+    background:var(--bg); overflow-y:auto; -webkit-overflow-scrolling:touch;
+    transform:translateX(0); transition:transform .32s cubic-bezier(.22,.61,.36,1);}
+  .screen.hide-right{transform:translateX(100%)}
+  .screen.hide-left{transform:translateX(-22%); filter:brightness(.92)}
+  .screen::-webkit-scrollbar{width:0}
+  /* ── AUTH SCREENS ─────────────────────────────── */
+  .auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    flex:1;padding:32px 24px;gap:0}
+  .auth-logo{margin-bottom:28px;text-align:center}
+  .auth-logo svg{width:52px;height:52px;color:var(--green)}
+  .auth-logo .auth-brand{font-size:18px;font-weight:800;color:var(--ink);letter-spacing:-.3px;margin-top:8px}
+  .auth-logo .auth-sub{font-size:13px;color:var(--muted);margin-top:2px}
+  .auth-title{font-size:22px;font-weight:800;text-align:center;margin-bottom:6px;letter-spacing:-.3px}
+  .auth-desc{font-size:14px;color:var(--muted);text-align:center;margin-bottom:28px}
+  .auth-form{width:100%;display:flex;flex-direction:column;gap:12px}
+  .auth-field{display:flex;flex-direction:column;gap:5px}
+  .auth-field label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .auth-field input{border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;
+    font-size:15px;font-family:inherit;color:var(--ink);background:#fff;outline:none;transition:.15s}
+  .auth-field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+  .auth-btn{border:0;border-radius:14px;padding:15px;font-size:15px;font-weight:700;
+    cursor:pointer;width:100%;margin-top:4px;transition:.15s}
+  .auth-btn.primary{background:var(--green);color:#fff;box-shadow:0 8px 20px rgba(22,163,74,.25)}
+  .auth-btn.primary:hover{background:var(--green-d)}
+  .auth-btn.primary:disabled{background:#94a3b8;box-shadow:none;cursor:not-allowed}
+  .auth-btn.ghost{background:transparent;color:var(--green);font-size:14px;margin-top:4px}
+  .auth-err{background:#fee2e2;color:#dc2626;border-radius:10px;padding:12px 14px;
+    font-size:13px;font-weight:600;display:none;margin-top:-4px}
+  .auth-divider{display:flex;align-items:center;gap:12px;margin:4px 0}
+  .auth-divider span{flex:1;height:1px;background:var(--line)}
+  .auth-divider p{font-size:12px;color:var(--muted);white-space:nowrap}
+  /* Botón de logout */
+  .logout-btn{position:absolute;top:18px;right:70px;background:rgba(255,255,255,.18);
+    border:0;border-radius:8px;padding:6px 10px;color:#fff;font-size:12px;font-weight:700;
+    cursor:pointer;display:none}
+
+
+  /* ---------- HOME HEADER ---------- */
+  .home-head{
+    background:linear-gradient(150deg,#16a34a 0%, #0e7a39 100%);
+    color:#fff; padding:54px 22px 26px; border-radius:0 0 28px 28px;
+    position:relative;
+  }
+  .brand{display:flex; align-items:center; gap:11px; color:#fff; margin-bottom:20px}
+  .brand .mark{width:34px; height:34px; flex:none; display:block; color:#5cb8ec}
+  .brand .wm{display:flex; flex-direction:column; line-height:1}
+  .brand .wm b{font-size:16px; font-weight:800; letter-spacing:.4px}
+  .brand .wm small{font-size:8px; letter-spacing:2px; opacity:.85; margin-top:4px; text-transform:uppercase}
+  .greet{font-size:14px; opacity:.85; margin:0}
+  .uname{font-size:25px; font-weight:800; margin:2px 0 0; letter-spacing:-.3px}
+  .urole{font-size:12.5px; opacity:.8; margin-top:3px}
+  .avatar{position:absolute; top:50px; right:22px; width:46px;height:46px;border-radius:50%;
+    background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.5);
+    display:grid; place-items:center; font-weight:700; font-size:16px}
+
+  /* ---------- SEGMENT ---------- */
+  .seg-wrap{padding:18px 18px 6px}
+  .seg{display:flex; background:#e2e7ed; border-radius:14px; padding:4px; gap:4px}
+  .seg button{flex:1; border:0; background:transparent; padding:13px 6px; min-height:46px; border-radius:10px;
+    font-size:14px; font-weight:600; color:var(--muted); cursor:pointer; transition:.18s}
+  .seg button.on{background:#fff; color:var(--green-d); box-shadow:0 1px 3px rgba(15,23,42,.12)}
+
+  .list-meta{display:flex; align-items:center; justify-content:space-between;
+    padding:10px 22px 6px; font-size:12.5px; color:var(--muted)}
+  .list-meta b{color:var(--ink)}
+  .sortbtn{display:flex;align-items:center;gap:4px;background:none;border:0;color:var(--muted);
+    font-size:12.5px;font-weight:600;cursor:pointer}
+
+  /* ---------- CARDS ---------- */
+  .list{padding:6px 16px 30px; display:flex; flex-direction:column; gap:12px}
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:15px 15px 14px; cursor:pointer; border:1px solid var(--line);
+    transition:transform .12s, box-shadow .12s; position:relative; overflow:hidden}
+  .card:active{transform:scale(.985)}
+  .card .accent{position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--green)}
+  .card.k-b .accent{background:var(--sun)} .card.k-a .accent{background:var(--blue)}
+  .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  .cli{font-size:16.5px; font-weight:700; letter-spacing:-.2px; margin:0}
+  .sys{font-size:13px; color:var(--muted); margin:2px 0 0}
+  .kit-badge{font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px;
+    background:var(--green-l); color:var(--green-d); white-space:nowrap}
+  .card.k-b .kit-badge{background:var(--sun-l); color:#92580a}
+  .card.k-a .kit-badge{background:var(--blue-l); color:#1e40af}
+  .card-row{display:flex; align-items:center; gap:8px; margin-top:11px; font-size:13px; color:#334155}
+  .i{width:1em; height:1em; display:block}
+  .card-row .ic{display:inline-flex; align-items:center; justify-content:center; width:18px; flex:none; opacity:.9}
+  .card-row .ic .i{width:16px; height:16px}
+  .grp-ic .i{width:18px; height:18px}
+  .info-ic .i{width:20px; height:20px}
+  .map-off .i{width:20px; height:20px}
+  .card-row.when{font-weight:600}
+  .chev{position:absolute; right:14px; bottom:13px; color:#cbd5e1; font-size:20px}
+  .pill-today{display:inline-block; font-size:10.5px; font-weight:800; color:#fff;
+    background:var(--green); padding:2px 7px; border-radius:6px; margin-left:7px; vertical-align:1px}
+
+  .empty{text-align:center; color:var(--muted); padding:50px 30px; font-size:14px}
+  .empty .em{display:flex; justify-content:center; margin-bottom:10px; color:#94a3b8}
+  .empty .em .i{width:34px; height:34px}
+
+  /* ---------- DETAIL ---------- */
+  .det-head{background:linear-gradient(150deg,#16a34a 0%, #0e7a39 100%); color:#fff;
+    padding:46px 20px 20px; border-radius:0 0 26px 26px}
+  .back{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.16);
+    border:0; color:#fff; font-size:13.5px; font-weight:600; padding:8px 13px 8px 10px;
+    border-radius:999px; cursor:pointer; margin-bottom:16px}
+  .det-cli{font-size:23px; font-weight:800; margin:0; letter-spacing:-.3px}
+  .det-tags{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+  .tag{font-size:11.5px; font-weight:700; background:rgba(255,255,255,.18);
+    padding:5px 11px; border-radius:999px; backdrop-filter:blur(4px)}
+
+  .info{padding:16px 16px 4px; display:flex; flex-direction:column; gap:11px}
+  .info-card{background:#fff; border:1px solid var(--line); border-radius:14px; padding:13px 14px;
+    display:flex; gap:12px; align-items:center}
+  .info-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+  .info-ic.cal{background:var(--green-l);color:var(--green-d)} .info-ic.loc{background:var(--blue-l);color:#1e40af}
+  .info-card .lbl{font-size:11.5px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.3px}
+  .info-card .val{font-size:14.5px; font-weight:700; margin-top:1px}
+  .info-card .sub{font-size:12.5px; color:var(--muted); margin-top:1px}
+  .maplink{margin-left:auto; font-size:12px; font-weight:700; color:var(--blue);
+    background:var(--blue-l); padding:7px 11px; border-radius:10px; text-decoration:none; flex:none}
+
+  .map{margin:4px 16px 0; border-radius:14px; overflow:hidden; border:1px solid var(--line); height:150px; background:#e2e8f0}
+  .map iframe{width:100%; height:100%; border:0; display:block}
+
+  /* materials */
+  .mat-head{padding:22px 20px 4px; display:flex; align-items:baseline; justify-content:space-between}
+  .mat-head h2{font-size:18px; font-weight:800; margin:0; letter-spacing:-.3px}
+  .src-note{font-size:12.5px; color:var(--muted); padding:2px 20px 0}
+  .src-note.est{color:#92580a}
+
+  .progress{margin:12px 18px 4px; background:#fff; border:1px solid var(--line);
+    border-radius:13px; padding:12px 14px}
+  .progress .pt{display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:8px}
+  .progress .pt .n{color:var(--green-d)}
+  .bar{height:8px; background:#e8edf2; border-radius:99px; overflow:hidden}
+  .bar i{display:block; height:100%; width:100%; background:linear-gradient(90deg,#22c55e,#16a34a);
+    transform:scaleX(0); transform-origin:left; transition:transform .3s ease-out; border-radius:99px}
+
+  .groups{padding:10px 16px 40px; display:flex; flex-direction:column; gap:10px}
+  .grp{background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .grp-head{display:flex; align-items:center; gap:11px; padding:13px 14px; cursor:pointer; user-select:none}
+  .grp-ic{width:32px;height:32px;border-radius:9px;background:var(--green-l);color:var(--green-d);display:grid;place-items:center;flex:none}
+  .grp.equip .grp-ic{background:var(--sun-l);color:#92580a}
+  .grp.tools .grp-ic{background:var(--blue-l);color:#1e40af}
+  .grp-tt{font-size:14.5px; font-weight:700}
+  .grp-ct{font-size:12.5px; color:var(--muted); font-weight:600}
+  .grp-arrow{margin-left:auto; color:#cbd5e1; transition:transform .2s; font-size:13px}
+  .grp.open .grp-arrow{transform:rotate(90deg)}
+  .grp-body{display:none; padding:2px 6px 8px}
+  .grp.open .grp-body{display:block}
+  .item{display:flex; align-items:center; gap:12px; padding:14px 10px; min-height:56px; border-top:1px solid var(--line-2)}
+  .item:first-child{border-top:0}
+  .cbx{width:30px;height:30px;border-radius:8px;border:2px solid #b8c2cf;flex:none;display:grid;place-items:center;
+    cursor:pointer;transition:.15s;background:#fff;font-size:17px;color:#fff}
+  .item.done .cbx{background:var(--green);border-color:var(--green)}
+  .item .nm{font-size:14.5px; line-height:1.35; flex:1}
+  .item.done .nm{color:var(--muted); text-decoration:line-through}
+  .qty{font-size:14px; font-weight:800; color:var(--green-d); background:var(--green-l);
+    padding:5px 10px; border-radius:8px; white-space:nowrap; flex:none}
+  .grp.equip .qty{color:#92580a; background:var(--sun-l)}
+
+  .foot{padding:0 16px 30px}
+  .btn-done{width:100%; border:0; background:var(--green); color:#fff; font-size:15px; font-weight:700;
+    padding:15px; border-radius:14px; cursor:pointer; box-shadow:0 8px 20px rgba(22,163,74,.3)}
+  .btn-done:active{transform:scale(.99)}
+
+  /* offline map fallback */
+  .map-off{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    background:#e8edf2; color:#475569; text-align:center; padding:0 16px}
+  .map-off .mo-t{font-weight:700; font-size:14px; display:flex; align-items:center; gap:8px}
+  .map-off .mo-s{font-size:12.5px; color:#64748b}
+
+  /* toast (undo) */
+  .toast{position:absolute; left:50%; bottom:22px; transform:translate(-50%,16px);
+    background:#0f172a; color:#fff; font-size:13.5px; font-weight:600; padding:12px 16px; border-radius:13px;
+    box-shadow:0 12px 30px rgba(15,23,42,.4); display:flex; align-items:center; gap:6px;
+    opacity:0; pointer-events:none; transition:opacity .22s, transform .22s ease-out; z-index:50; max-width:88%}
+  .toast.show{opacity:1; transform:translate(-50%,0); pointer-events:auto}
+  .toast .undo{background:none; border:0; color:#7dd3a0; font-weight:800; font-size:13.5px; cursor:pointer;
+    padding:4px 6px; min-height:32px}
+
+  /* estado de obra (tiempos) */
+  .card-tags{display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex:none}
+  .est-chip{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:999px; white-space:nowrap}
+  .est-chip.curso{background:var(--blue-l); color:#1e40af}
+  .est-chip.fin{background:var(--green-l); color:var(--green-d)}
+
+  .estado{padding:14px 16px 0}
+  .est-card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px}
+  .est-card.curso{border-color:#bfdbfe; background:#f5f9ff}
+  .est-card.fin{border-color:#bbf7d0; background:#f4fdf7}
+  .est-top{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+  .est-badge{font-size:11px; font-weight:800; padding:5px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:.4px}
+  .est-badge.pend{background:#eef0f3; color:#64748b}
+  .est-badge.curso{background:var(--blue-l); color:#1e40af}
+  .est-badge.fin{background:var(--green-l); color:var(--green-d)}
+  .est-sub{font-size:12.5px; color:var(--muted)}
+  .est-times{display:flex; gap:16px; margin-bottom:12px; font-size:13px; color:#334155; font-weight:600}
+  .est-times span{display:flex; align-items:center; gap:6px}
+  .est-times .i{width:15px; height:15px; opacity:.7}
+  .est-btn{width:100%; border:0; border-radius:12px; padding:14px; font-size:15px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px}
+  .est-btn .i{width:18px; height:18px}
+  .est-btn.start{background:var(--green); color:#fff; box-shadow:0 8px 20px rgba(22,163,74,.28)}
+  .est-btn.stop{background:#2563eb; color:#fff; box-shadow:0 8px 20px rgba(37,99,235,.28)}
+  .est-btn.ghost{background:transparent; color:var(--muted); border:1px solid var(--line); padding:10px; font-size:13.5px; box-shadow:none}
+
+  /* cierre de obra */
+  .sec-tt{font-size:18px; font-weight:800; margin:0; padding:16px 4px 8px; letter-spacing:-.3px}
+  .cierre{padding:4px 16px 36px}
+  .cierre-card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:12px}
+  .cl-h{display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:700; margin-bottom:12px}
+  .cl-h .i{width:18px; height:18px; color:var(--muted)}
+  .cl-ct{margin-left:auto; font-size:12px; color:var(--muted); font-weight:600}
+  .desv-list{display:flex; flex-direction:column; gap:8px; margin-bottom:12px}
+  .desv-item{display:flex; align-items:center; gap:9px; background:#f7f9fb; border-radius:10px; padding:9px 6px 9px 10px}
+  .desv-cat{font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:6px; white-space:nowrap; flex:none}
+  .desv-cat.mas{background:#fee2e2; color:#b91c1c}
+  .desv-cat.menos{background:#dbeafe; color:#1e40af}
+  .desv-cat.prob{background:#fef3c7; color:#92580a}
+  .desv-cat.otro{background:#eef0f3; color:#475569}
+  .desv-txt{font-size:13.3px; flex:1; line-height:1.35}
+  .mini-del{background:none; border:0; color:#94a3b8; cursor:pointer; flex:none; width:30px; height:30px; display:grid; place-items:center}
+  .mini-del .i{width:16px; height:16px}
+  .mini-empty{font-size:12.5px; color:var(--muted); padding:2px 2px 8px}
+  .desv-form{display:flex; flex-direction:column; gap:8px}
+  .dv-cat,.dv-txt{width:100%; border:1px solid var(--line); border-radius:10px; padding:12px; font-size:14px; font-family:inherit; background:#fff; color:var(--ink)}
+  .dv-txt{min-height:46px}
+  .dv-add{border:0; background:var(--green-l); color:var(--green-d); font-weight:700; font-size:14px; border-radius:10px; padding:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px}
+  .dv-add .i{width:16px; height:16px}
+
+  /* fotos */
+  .fotos-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:8px; margin-bottom:12px}
+  .foto{position:relative; aspect-ratio:1; border-radius:10px; overflow:hidden; background:#eef0f3}
+  .foto img{width:100%; height:100%; object-fit:cover; display:block}
+  .foto-del{position:absolute; top:4px; right:4px; width:26px; height:26px; border:0; border-radius:50%;
+    background:rgba(15,23,42,.6); color:#fff; display:grid; place-items:center; cursor:pointer}
+  .foto-del .i{width:14px; height:14px}
+  .foto-btn{display:flex; align-items:center; justify-content:center; gap:8px; border:1.5px dashed #cbd5e1; border-radius:12px;
+    padding:14px; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer}
+  .foto-btn .i{width:18px; height:18px}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition-duration:.01ms !important; animation-duration:.01ms !important}
+    .screen{transition:none}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- LOGIN SCREEN -->
+  <section class="screen hide-right" id="screenLogin">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <svg viewBox="0 0 120 120" fill="currentColor">
+          <path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/>
+          <path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/>
+          <path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 60.00 81.00 Z"/>
+          <path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/>
+        </svg>
+        <div class="auth-brand">ALP GROUP</div>
+        <div class="auth-sub">Energías Renovables · Instaladores</div>
+      </div>
+      <h2 class="auth-title">Bienvenido</h2>
+      <p class="auth-desc">Ingresá con tu cuenta para ver tus obras del día</p>
+      <div class="auth-form">
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email"/>
+        </div>
+        <div class="auth-field">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <div class="auth-err" id="loginErr"></div>
+        <button class="auth-btn primary" id="btnLogin" onclick="doLogin()">Ingresar</button>
+        <div class="auth-divider"><span></span><p>¿No tenés cuenta?</p><span></span></div>
+        <button class="auth-btn ghost" onclick="goTo('screenLogin','screenRegister')">Registrarse como instalador →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTER SCREEN -->
+  <section class="screen hide-right" id="screenRegister">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <svg viewBox="0 0 120 120" fill="currentColor" width="40" height="40">
+          <path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/>
+          <path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/>
+          <path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 39.00 60.00 Z"/>
+        </svg>
+        <div class="auth-brand" style="font-size:16px">Crear cuenta</div>
+      </div>
+      <h2 class="auth-title">Registrarse</h2>
+      <p class="auth-desc">Completá tus datos para acceder a la app</p>
+      <div class="auth-form">
+        <div class="auth-field">
+          <label>Nombre completo</label>
+          <input type="text" id="regNombre" placeholder="Ej: Carlos Ferreyra" autocomplete="name"/>
+        </div>
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="regEmail" placeholder="tu@email.com" autocomplete="email"/>
+        </div>
+        <div class="auth-field">
+          <label>Contraseña</label>
+          <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+        </div>
+        <div class="auth-err" id="regErr"></div>
+        <button class="auth-btn primary" id="btnRegister" onclick="doRegister()">Crear cuenta</button>
+        <div class="auth-divider"><span></span><p>¿Ya tenés cuenta?</p><span></span></div>
+        <button class="auth-btn ghost" onclick="goTo('screenRegister','screenLogin')">← Volver al login</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen hide-right" id="home">
+    <div class="home-head">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 120 120" fill="currentColor" role="img" aria-label="ALP Group">
+          <path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/>
+          <path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/>
+          <path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 60.00 81.00 Z"/>
+          <path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/>
+        </svg>
+        <span class="wm"><b>ALP GROUP</b><small>Energías Renovables</small></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn" onclick="doLogout()">Salir</button>
+      <div class="avatar" id="avatar">CF</div>
+      <p class="greet">Hola,</p>
+      <h1 class="uname" id="uname">Carlos Ferreyra</h1>
+      <div class="urole">Instalador · Equipo Buenos Aires</div>
+    </div>
+
+    <div class="seg-wrap">
+      <div class="seg" id="seg">
+        <button data-f="dia" class="on">Hoy</button>
+        <button data-f="semana">Esta semana</button>
+        <button data-f="mes">Este mes</button>
+      </div>
+    </div>
+
+    <div class="list-meta">
+      <span><b id="count">0</b> <span id="countlbl">instalaciones</span></span>
+      <span class="sortbtn">↕ Próximas primero</span>
+    </div>
+
+    <div class="list" id="list"></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="screen hide-right" id="detail"></section>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" style="position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100">
+    <svg width="48" height="48" viewBox="0 0 120 120" fill="#16a34a" opacity="0.9"><path d="M 60.00 39.00 L 61.68 36.78 L 63.69 34.70 L 66.00 32.80 L 68.60 31.11 L 71.47 29.67 L 74.59 28.50 L 77.94 27.64 L 81.48 27.11 L 85.18 26.92 L 89.02 27.12 L 92.95 27.70 L 96.94 28.69 L 100.95 30.09 L 104.95 31.91 A 53 53 0 0 1 107.64 83.23 L 107.07 78.88 L 106.13 74.74 L 104.85 70.83 L 103.26 67.18 L 101.39 63.83 L 99.28 60.78 L 96.95 58.06 L 94.44 55.68 L 91.80 53.65 L 89.06 51.98 L 86.25 50.67 L 83.41 49.72 L 80.59 49.12 L 77.81 48.87 A 21 21 0 0 0 60.00 39.00 Z"/><path d="M 81.00 60.00 L 83.22 61.68 L 85.30 63.69 L 87.20 66.00 L 88.89 68.60 L 90.33 71.47 L 91.50 74.59 L 92.36 77.94 L 92.89 81.48 L 93.08 85.18 L 92.88 89.02 L 92.30 92.95 L 91.31 96.94 L 89.91 100.95 L 88.09 104.95 A 53 53 0 0 1 36.77 107.64 L 41.12 107.07 L 45.26 106.13 L 49.17 104.85 L 52.82 103.26 L 56.17 101.39 L 59.22 99.28 L 61.94 96.95 L 64.32 94.44 L 66.35 91.80 L 68.02 89.06 L 69.33 86.25 L 70.28 83.41 L 70.88 80.59 L 71.13 77.81 A 21 21 0 0 0 81.00 60.00 Z"/><path d="M 60.00 81.00 L 58.32 83.22 L 56.31 85.30 L 54.00 87.20 L 51.40 88.89 L 48.53 90.33 L 45.41 91.50 L 42.06 92.36 L 38.52 92.89 L 34.82 93.08 L 30.98 92.88 L 27.05 92.30 L 23.06 91.31 L 19.05 89.91 L 15.05 88.09 A 53 53 0 0 1 12.36 36.77 L 12.93 41.12 L 13.87 45.26 L 15.15 49.17 L 16.74 52.82 L 18.61 56.17 L 20.72 59.22 L 23.05 61.94 L 25.56 64.32 L 28.20 66.35 L 30.94 68.02 L 33.75 69.33 L 36.59 70.28 L 39.41 70.88 L 42.19 71.13 A 21 21 0 0 0 60.00 81.00 Z"/><path d="M 39.00 60.00 L 36.78 58.32 L 34.70 56.31 L 32.80 54.00 L 31.11 51.40 L 29.67 48.53 L 28.50 45.41 L 27.64 42.06 L 27.11 38.52 L 26.92 34.82 L 27.12 30.98 L 27.70 27.05 L 28.69 23.06 L 30.09 19.05 L 31.91 15.05 A 53 53 0 0 1 83.23 12.36 L 78.88 12.93 L 74.74 13.87 L 70.83 15.15 L 67.18 16.74 L 63.83 18.61 L 60.78 20.72 L 58.06 23.05 L 55.68 25.56 L 53.65 28.20 L 51.98 30.94 L 50.67 33.75 L 49.72 36.59 L 49.12 39.41 L 48.87 42.19 A 21 21 0 0 0 39.00 60.00 Z"/></svg>
+    <p style="color:var(--muted);font-size:14px;font-weight:600;margin:0">Conectando con ALP Group...</p>
+  </div>
+
+  <!-- OFFLINE BANNER -->
+  <div id="offline-banner" style="display:none;position:absolute;top:0;left:0;right:0;background:#f59e0b;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;gap:8px;align-items:center;z-index:99;text-align:center">
+    ⚠ Sin conexión · Mostrando datos de ejemplo
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+</div>
+
+
+<!-- ============================================================
+     SUPABASE SDK
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN SUPABASE
+// ============================================================
+const SUPABASE_URL = 'https://mdovqpblzflictxreajz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_woFfvS4AyhJtAa7GjUwuIw_QlkzA61y';
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============================================================
+//  NAVEGACIÓN ENTRE PANTALLAS
+// ============================================================
+function goTo(from, to) {
+  document.getElementById(from).classList.add('hide-right');
+  document.getElementById(to).classList.remove('hide-right');
+  // limpiar errores al cambiar de pantalla
+  ['loginErr','regErr'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) { el.style.display='none'; el.textContent=''; }
+  });
+}
+
+function showAuthErr(elId, msg) {
+  const el = document.getElementById(elId);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ============================================================
+//  LOGIN
+// ============================================================
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const btn   = document.getElementById('btnLogin');
+  if(!email || !pass) return showAuthErr('loginErr', 'Completá email y contraseña.');
+  btn.disabled = true; btn.textContent = 'Ingresando...';
+  const { data, error } = await sbClient.auth.signInWithPassword({ email, password: pass });
+  if(error) {
+    showAuthErr('loginErr', 'Email o contraseña incorrectos.');
+    btn.disabled = false; btn.textContent = 'Ingresar';
+    return;
+  }
+  await onLoginSuccess(data.user);
+}
+
+// ============================================================
+//  REGISTRO
+// ============================================================
+async function doRegister() {
+  const nombre = document.getElementById('regNombre').value.trim();
+  const email  = document.getElementById('regEmail').value.trim();
+  const pass   = document.getElementById('regPass').value;
+  const btn    = document.getElementById('btnRegister');
+  if(!nombre) return showAuthErr('regErr', 'Ingresá tu nombre completo.');
+  if(!email)  return showAuthErr('regErr', 'Ingresá tu email.');
+  if(pass.length < 6) return showAuthErr('regErr', 'La contraseña debe tener al menos 6 caracteres.');
+  btn.disabled = true; btn.textContent = 'Creando cuenta...';
+  // 1. Crear usuario en Supabase Auth
+  const { data, error } = await sbClient.auth.signUp({
+    email, password: pass,
+    options: { data: { nombre, iniciales: nombre.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2) } }
+  });
+  if(error) {
+    showAuthErr('regErr', error.message === 'User already registered' ? 'Ya existe una cuenta con ese email.' : error.message);
+    btn.disabled = false; btn.textContent = 'Crear cuenta';
+    return;
+  }
+  // 2. Guardar en tabla instaladores
+  const iniciales = nombre.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+  await sbClient.from('instaladores').insert({ nombre, iniciales, email }).select();
+  // 3. Ir a la app
+  await onLoginSuccess(data.user, { nombre, iniciales });
+}
+
+// ============================================================
+//  LOGOUT
+// ============================================================
+async function doLogout() {
+  await sbClient.auth.signOut();
+  localStorage.removeItem('alp_session');
+  DB.installer = { nombre: '', iniciales: '' };
+  // Volver al login
+  document.getElementById('home').classList.add('hide-right');
+  document.getElementById('detail').classList.add('hide-right');
+  document.getElementById('screenLogin').classList.remove('hide-right');
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('btnLogin').disabled = false;
+  document.getElementById('btnLogin').textContent = 'Ingresar';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ============================================================
+//  DESPUÉS DEL LOGIN EXITOSO
+// ============================================================
+async function onLoginSuccess(user, fallbackData) {
+  // Obtener nombre del instalador desde la tabla o desde metadata
+  let nombre = '', iniciales = '';
+  const { data: inst } = await sbClient.from('instaladores').select('id,nombre,iniciales').eq('email', user.email).single();
+  let instaladorId = null;
+  if(inst) {
+    nombre = inst.nombre; iniciales = inst.iniciales; instaladorId = inst.id;
+  } else if(fallbackData) {
+    nombre = fallbackData.nombre; iniciales = fallbackData.iniciales;
+  } else {
+    nombre = user.email.split('@')[0]; iniciales = nombre.slice(0,2).toUpperCase();
+  }
+  // Usar el UUID de Auth directamente para filtrar obras
+  DB.installer = { nombre, iniciales, id: instaladorId, authId: user.id };
+  localStorage.setItem('alp_session', JSON.stringify({ email: user.email, nombre, iniciales, id: instaladorId, authId: user.id }));
+  // Ocultar login, mostrar home
+  document.getElementById('screenLogin').classList.add('hide-right');
+  document.getElementById('screenRegister').classList.add('hide-right');
+  document.getElementById('home').classList.remove('hide-right');
+  document.getElementById('logoutBtn').style.display = 'block';
+  // Cargar obras
+  await cargarDatos();
+}
+
+// ============================================================
+//  VERIFICAR SESIÓN AL ARRANCAR
+// ============================================================
+async function checkSession() {
+  mostrarCargando(true);
+  // Verificar sesión activa en Supabase
+  const { data: { session } } = await sbClient.auth.getSession();
+  if(session) {
+    // Restaurar id desde localStorage si existe
+    try {
+      const saved = JSON.parse(localStorage.getItem('alp_session') || '{}');
+      if(saved.id) DB.installer = { nombre: saved.nombre || '', iniciales: saved.iniciales || '', id: saved.id, authId: saved.authId };
+    } catch(e) {}
+    await onLoginSuccess(session.user);
+  } else {
+    // Sin sesión → mostrar login
+    mostrarCargando(false);
+    document.getElementById('home').classList.add('hide-right');
+    document.getElementById('screenLogin').classList.remove('hide-right');
+  }
+}
+
+// ============================================================
+//  ESTADO GLOBAL — se llena desde Supabase al cargar
+// ============================================================
+let DB = {
+  today: new Date().toISOString().slice(0,10),
+  installer: { nombre: 'Cargando...', iniciales: '...' },
+  installations: [],
+  materials: {}
+};
+
+// Herramientas fijas (igual que antes)
+const HERRAMIENTAS_FIJAS = { cat:"Herramientas", items:[
+  {n:"Escalera extensible (2 cuerpos)"},
+  {n:"Arnés de seguridad + eslinga"},
+  {n:"Casco, lentes y guantes de trabajo"},
+  {n:"Guantes dieléctricos"},
+  {n:"Soga para izar materiales al techo"},
+  {n:"Atornillador/taladro de impacto + baterías"},
+  {n:"Amoladora angular"},
+  {n:"Pistola de calor (termocontraíbles)"},
+  {n:"Juego de destornilladores (Phillips y planos)"},
+  {n:"Juego de llaves combinadas + Allen"},
+  {n:"Llave dinamométrica"},
+  {n:"Pinzas (punta, corte y universal)"},
+  {n:"Pinza pelacables"},
+  {n:"Maza (para la jabalina de tierra)"},
+  {n:"Arco de sierra (caños PVC)"},
+  {n:"Pasacables / sonda"},
+  {n:"Trincheta, cinta métrica y nivel"},
+  {n:"Pistola para sellador"},
+  {n:"Crimpadora MC4 + llave MC4"},
+  {n:"Crimpadora de terminales"},
+  {n:"Multímetro / pinza amperométrica (CC)"},
+  {n:"Detector de tensión"}
+]};
+
+// ============================================================
+//  CARGA INICIAL DESDE SUPABASE
+// ============================================================
+async function cargarDatos() {
+  mostrarCargando(true);
+
+  try {
+    // 1. Cargar obras del mes actual
+    const hoy = new Date();
+    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString();
+    const ultimoDiaMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59).toISOString();
+
+    // Filtrar obras por instalador logueado
+    console.log('DB.installer al cargar:', JSON.stringify(DB.installer));
+    
+    let query = sbClient
+      .from('obras')
+      .select('*')
+      .gte('fecha', primerDiaMes)
+      .lte('fecha', ultimoDiaMes)
+      .order('fecha', { ascending: true });
+
+    // Si el instalador tiene ID, mostrar solo sus obras
+    if(DB.installer && DB.installer.id) {
+      console.log('Filtrando por instalador_id:', DB.installer.id);
+      query = query.eq('instalador_id', DB.installer.id);
+    } else {
+      console.log('Sin ID de instalador - mostrando todas las obras');
+    }
+
+    const { data: obras, error: errorObras } = await query;
+
+    if (errorObras) throw errorObras;
+
+    // 2. Cargar materiales de esas obras
+    const obraIds = (obras || []).map(o => o.id);
+    let materialesMap = {};
+
+    if (obraIds.length > 0) {
+      const { data: mats, error: errorMats } = await sbClient
+        .from('materiales')
+        .select('*')
+        .in('obra_id', obraIds)
+        .order('categoria')
+        .order('nombre');
+
+      if (errorMats) throw errorMats;
+
+      // Agrupar materiales por obra_id y categoría
+      (mats || []).forEach(m => {
+        if (!materialesMap[m.obra_id]) materialesMap[m.obra_id] = {};
+        if (!materialesMap[m.obra_id][m.categoria]) materialesMap[m.obra_id][m.categoria] = [];
+        materialesMap[m.obra_id][m.categoria].push({ n: m.nombre, c: m.cantidad, u: m.unidad });
+      });
+    }
+
+    // 3. Transformar al formato que espera la app
+    DB.installations = (obras || []).map(o => {
+      const fechaObj = new Date(o.fecha);
+      const esHoy = fechaObj.toISOString().slice(0,10) === DB.today;
+
+      // Construir grupos de materiales para esta obra
+      const grupos = {};
+      if (materialesMap[o.id]) {
+        Object.entries(materialesMap[o.id]).forEach(([cat, items]) => {
+          grupos[cat] = items;
+        });
+      }
+      DB.materials[o.id] = Object.entries(grupos).map(([cat, items]) => ({ cat, items }));
+
+      return {
+        id: o.id,
+        cliente: o.cliente,
+        sistema: o.sistema,
+        potencia: o.potencia,
+        kit: o.kit,
+        kclass: o.kclass,
+        fecha: o.fecha,
+        fechaTxt: esHoy ? 'Hoy' : formatFechaTxt(fechaObj),
+        hora: o.hora,
+        dir: o.direccion,
+        loc: o.localidad,
+        lat: parseFloat(o.lat),
+        lon: parseFloat(o.lon),
+        confirmada: o.confirmada,
+        mats: o.id   // usamos el UUID como clave de materiales
+      };
+    });
+
+    // 4. Si no hay obras en Supabase todavía, cargar datos de demo
+    if (DB.installations.length === 0) {
+      cargarDatosDemo();
+    }
+
+  } catch(err) {
+    console.error('Error cargando desde Supabase:', err);
+    // Fallback a datos locales de demo si falla la conexión
+    cargarDatosDemo();
+    mostrarBannerOffline();
+  }
+
+  mostrarCargando(false);
+  renderHome();
+}
+
+function formatFechaTxt(fecha) {
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${dias[fecha.getDay()]} ${fecha.getDate()} ${meses[fecha.getMonth()]}`;
+}
+
+// ============================================================
+//  DATOS DE DEMO (fallback si Supabase está vacío o sin conexión)
+// ============================================================
+function cargarDatosDemo() {
+  DB.installer = { nombre: 'Carlos Ferreyra', iniciales: 'CF' };
+  DB.installations = [
+    { id:"demo-maidana", cliente:"Familia Maidana (DEMO)", sistema:"Sistema híbrido (paneles + baterías)", potencia:"23 kWp", kit:"Kit C", kclass:"k-c",
+      fecha: DB.today + "T09:00", fechaTxt:"Hoy", hora:"09:00",
+      dir:"Av. Mariano Castex 1450", loc:"Canning, Buenos Aires", lat:-34.8688, lon:-58.5159,
+      confirmada:true, mats:"demo-maidana" },
+    { id:"demo-rossi", cliente:"Familia Rossi (DEMO)", sistema:"On-grid (sin baterías)", potencia:"11,5 kWp", kit:"Kit A", kclass:"k-a",
+      fecha: DB.today + "T11:00", fechaTxt:"Hoy", hora:"11:00",
+      dir:"Colectora Este 2200", loc:"Escobar, Buenos Aires", lat:-34.3487, lon:-58.7937,
+      confirmada:false, mats:"demo-rossi" }
+  ];
+  DB.materials["demo-maidana"] = [
+    {cat:"Equipos", items:[{n:"Growatt SPF5000",c:2,u:"Un"},{n:"Batería AXE 5.0L",c:2,u:"Un"},{n:"Growatt MOD 10k",c:1,u:"Un"}]},
+    {cat:"Cables", items:[{n:"Cable solar 1x6mm2 negro",c:200,u:"Mts"},{n:"Cable solar 1x6mm2 rojo",c:200,u:"Mts"}]}
+  ];
+  DB.materials["demo-rossi"] = [
+    {cat:"Equipos", items:[{n:"Inversor on-grid Growatt MOD 11k",c:1,u:"Un"},{n:"Meter con anillos 100A",c:1,u:"Un"}]},
+    {cat:"Soportes", items:[{n:"Barral de montaje Chiko 4,2m",c:11,u:"Un"},{n:"End Clamps Chiko",c:22,u:"Un"}]}
+  ];
+}
+
+function mostrarCargando(activo) {
+  const el = document.getElementById('loading-overlay');
+  if (el) el.style.display = activo ? 'flex' : 'none';
+}
+
+function mostrarBannerOffline() {
+  const banner = document.getElementById('offline-banner');
+  if (banner) banner.style.display = 'flex';
+}
+
+// ============================================================
+//  GUARDAR JORNADA EN SUPABASE
+// ============================================================
+async function guardarInicioJornada(obraId) {
+  // Solo guardar si es un ID real de Supabase (UUID), no demo
+  if (obraId.startsWith('demo-')) return;
+  try {
+    // Buscar si ya existe jornada para esta obra
+    const { data: existente } = await sbClient
+      .from('jornadas')
+      .select('id')
+      .eq('obra_id', obraId)
+      .single();
+
+    if (existente) {
+      await sbClient.from('jornadas').update({ iniciada_at: new Date().toISOString() }).eq('id', existente.id);
+    } else {
+      await sbClient.from('jornadas').insert({ obra_id: obraId, iniciada_at: new Date().toISOString() });
+    }
+  } catch(err) {
+    console.warn('No se pudo guardar inicio en Supabase (se guardó localmente):', err);
+  }
+}
+
+async function guardarFinJornada(obraId) {
+  if (obraId.startsWith('demo-')) return;
+  try {
+    const { data: existente } = await sbClient
+      .from('jornadas')
+      .select('id')
+      .eq('obra_id', obraId)
+      .single();
+
+    if (existente) {
+      await sbClient.from('jornadas').update({ finalizada_at: new Date().toISOString() }).eq('id', existente.id);
+    }
+  } catch(err) {
+    console.warn('No se pudo guardar fin en Supabase (se guardó localmente):', err);
+  }
+}
+
+// ============================================================
+//  GUARDAR DESVIACIÓN EN SUPABASE
+// ============================================================
+async function guardarDesviacion(obraId, categoria, descripcion) {
+  if (obraId.startsWith('demo-')) return;
+  try {
+    await sbClient.from('desviaciones').insert({
+      obra_id: obraId,
+      categoria,
+      descripcion
+    });
+  } catch(err) {
+    console.warn('No se pudo guardar desviación en Supabase:', err);
+  }
+}
+
+async function eliminarDesviacion(obraId, index) {
+  if (obraId.startsWith('demo-')) return;
+  // En la versión actual las desviaciones se identifican por índice local.
+  // En una versión futura se puede guardar el UUID de cada desviación.
+}
+
+// ============================================================
+//  GUARDAR FOTO EN SUPABASE STORAGE
+// ============================================================
+async function subirFotoSupabase(obraId, dataUrl, index) {
+  if (obraId.startsWith('demo-')) return null;
+  try {
+    // Convertir dataUrl a Blob
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    const path = `${obraId}/foto_${Date.now()}_${index}.jpg`;
+
+    const { error: errStorage } = await sbClient.storage
+      .from('fotos-obras')
+      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+
+    if (errStorage) throw errStorage;
+
+    // Registrar en tabla fotos
+    await sbClient.from('fotos').insert({ obra_id: obraId, storage_path: path });
+
+    return path;
+  } catch(err) {
+    console.warn('No se pudo subir foto a Supabase (guardada localmente):', err);
+    return null;
+  }
+}
+</script>
+
+<script>
+const TODAY = DB.today;
+// ---------- iconos (SVG de línea, currentColor) ----------
+const ICONS = {
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  package:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  battery:'<rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/>',
+  power:'<path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  wave:'<path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/>',
+  pipes:'<rect x="3" y="5" width="18" height="6" rx="3"/><rect x="3" y="13" width="18" height="6" rx="3"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  ground:'<line x1="12" y1="3" x2="12" y2="12"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/><line x1="10" y1="20" x2="14" y2="20"/>',
+  kit:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+  truck:'<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/>',
+  inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  wifioff:'<line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  toolbox:'<path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M8 9V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3"/><line x1="3" y1="13" x2="21" y2="13"/><rect x="9.5" y="11.5" width="5" height="3" rx="1"/>',
+  play:'<polygon points="6 4 20 12 6 20 6 4"/>',
+  stop:'<rect x="5" y="5" width="14" height="14" rx="2"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+  camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  alert:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+};
+function icon(name){
+  return `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||ICONS.package}</svg>`;
+}
+const CAT_IC = {
+  "Equipos":"battery","Servicios":"truck","Tablero de CA":"power","Tablero de CC":"zap",
+  "Cables":"wave","Canalizaciones":"pipes","Bandejas pasacables":"pipes","Soportes":"tool",
+  "Puesta a tierra":"ground","Varios":"kit","Usos varios obra":"kit","Herramientas":"toolbox"
+};
+
+function obraGroups(matKey){
+  return (DB.materials[matKey] || []).concat([HERRAMIENTAS_FIJAS]);
+}
+
+// ---------- check state (persistido offline con localStorage) ----------
+const checks = loadChecks();
+function loadChecks(){
+  try{
+    const raw = localStorage.getItem('alp_checks');
+    if(!raw) return {};
+    const o = JSON.parse(raw); const out = {};
+    for(const k in o) out[k] = new Set(o[k]);
+    return out;
+  }catch(e){ return {}; }
+}
+function saveChecks(){
+  try{
+    const o = {};
+    for(const k in checks) o[k] = [...checks[k]];
+    localStorage.setItem('alp_checks', JSON.stringify(o));
+  }catch(e){}
+}
+
+// ---------- toast ----------
+let toastTimer;
+function showToast(msg, undoFn){
+  const t = document.getElementById('toast');
+  t.innerHTML = msg + (undoFn ? ' <button class="undo">Deshacer</button>' : '');
+  t.classList.add('show');
+  if(undoFn) t.querySelector('.undo').onclick = ()=>{ undoFn(); hideToast(); };
+  clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 4500);
+}
+function hideToast(){ document.getElementById('toast').classList.remove('show'); }
+
+// ---------- registro de obra (persistido localmente + sincronizado con Supabase) ----------
+const obras = loadObras();
+function loadObras(){ try{ return JSON.parse(localStorage.getItem('alp_obras')||'{}'); }catch(e){ return {}; } }
+function saveObras(){ try{ localStorage.setItem('alp_obras', JSON.stringify(obras)); return true; }catch(e){ return false; } }
+function obraState(id){ if(!obras[id]) obras[id]={startedAt:null,finishedAt:null,desv:[],fotos:[]}; return obras[id]; }
+function estadoObra(id){ const o=obras[id]; if(!o||!o.startedAt) return 'pendiente'; return o.finishedAt ? 'finalizada' : 'en_curso'; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtTime(iso){ const d=new Date(iso); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function fmtDur(a,b){ let m=Math.max(0,Math.round((new Date(b)-new Date(a))/60000)); const h=Math.floor(m/60); m=m%60; return (h?h+'h ':'')+m+'min'; }
+function nowISO(){ return new Date().toISOString(); }
+
+// Inicio/fin de obra — guarda local Y en Supabase
+function iniciarObra(id){
+  const o=obraState(id);
+  o.startedAt=nowISO(); o.finishedAt=null;
+  saveObras();
+  guardarInicioJornada(id); // Supabase async (no bloquea)
+  renderEstado(id); renderCierre(id);
+}
+function finalizarObra(id){
+  const o=obraState(id);
+  if(!o.startedAt) o.startedAt=nowISO();
+  o.finishedAt=nowISO();
+  saveObras();
+  guardarFinJornada(id); // Supabase async
+  renderEstado(id); renderCierre(id); renderHome();
+  const c=document.getElementById('cierre'); if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function reabrirObra(id){ const o=obraState(id); o.finishedAt=null; saveObras(); renderEstado(id); renderHome(); }
+
+const DESV_CATS = ['Material de más','Material de menos','Problema en techo','Demora de acceso','Otro'];
+function desvClass(cat){ return cat==='Material de más'?'mas':cat==='Material de menos'?'menos':cat==='Otro'?'otro':'prob'; }
+
+function addDesv(id){
+  const sel=document.getElementById('dvCat'), inp=document.getElementById('dvTxt');
+  const txt=(inp.value||'').trim(); if(!txt){ inp.focus(); return; }
+  const cat = sel.value;
+  obraState(id).desv.push({cat, txt});
+  saveObras();
+  guardarDesviacion(id, cat, txt); // Supabase async
+  inp.value = '';
+  renderCierre(id);
+}
+function removeDesv(id,i){ obraState(id).desv.splice(i,1); saveObras(); renderCierre(id); }
+
+function addFoto(id, input){
+  const file = input.files && input.files[0]; if(!file) return;
+  const o = obraState(id);
+  if(o.fotos.length>=6){ showToast('Máximo 6 fotos por obra.'); input.value=''; return; }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1000; let w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>=w && h>max){ w=Math.round(w*max/h); h=max; }
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      const dataUrl = cv.toDataURL('image/jpeg',0.7);
+      const idx = o.fotos.length;
+      o.fotos.push({data: dataUrl, caption:''});
+      if(!saveObras()){ o.fotos.pop(); showToast('No hay más espacio para fotos en este teléfono.'); return; }
+      subirFotoSupabase(id, dataUrl, idx); // Supabase async
+      renderCierre(id);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function removeFoto(id,i){ obraState(id).fotos.splice(i,1); saveObras(); renderCierre(id); }
+
+function estadoHTML(id){
+  const st=estadoObra(id), o=obras[id]||{};
+  if(st==='pendiente') return `<div class="est-card">
+      <div class="est-top"><span class="est-badge pend">Pendiente</span><span class="est-sub">Tocá cuando llegues y arranques</span></div>
+      <button class="est-btn start" onclick="iniciarObra('${id}')">${icon('play')} Iniciar obra</button>
+    </div>`;
+  if(st==='en_curso') return `<div class="est-card curso">
+      <div class="est-top"><span class="est-badge curso">En curso</span><span class="est-sub">Desde las ${fmtTime(o.startedAt)} hs</span></div>
+      <button class="est-btn stop" onclick="finalizarObra('${id}')">${icon('stop')} Finalizar obra</button>
+    </div>`;
+  return `<div class="est-card fin">
+      <div class="est-top"><span class="est-badge fin">Finalizada</span><span class="est-sub">Duración ${fmtDur(o.startedAt,o.finishedAt)}</span></div>
+      <div class="est-times"><span>${icon('play')} Inicio ${fmtTime(o.startedAt)} hs</span><span>${icon('stop')} Fin ${fmtTime(o.finishedAt)} hs</span></div>
+      <button class="est-btn ghost" onclick="reabrirObra('${id}')">Reabrir obra</button>
+    </div>`;
+}
+function renderEstado(id){ const el=document.getElementById('estado'); if(el) el.innerHTML=estadoHTML(id); }
+
+function cierreHTML(id){
+  const o=obraState(id);
+  const desv = o.desv.length ? o.desv.map((d,i)=>`<div class="desv-item">
+      <span class="desv-cat ${desvClass(d.cat)}">${d.cat}</span>
+      <span class="desv-txt">${esc(d.txt)}</span>
+      <button class="mini-del" onclick="removeDesv('${id}',${i})" aria-label="Quitar">${icon('x')}</button>
+    </div>`).join('') : `<div class="mini-empty">Todavía no cargaste desviaciones.</div>`;
+  const fotos = o.fotos.length ? `<div class="fotos-grid">`+o.fotos.map((f,i)=>`<div class="foto">
+      <img src="${f.data}" alt="Foto de la obra">
+      <button class="foto-del" onclick="removeFoto('${id}',${i})" aria-label="Quitar foto">${icon('x')}</button>
+    </div>`).join('')+`</div>` : `<div class="mini-empty">Sin fotos cargadas.</div>`;
+  const opts = DESV_CATS.map(c=>`<option>${c}</option>`).join('');
+  return `<h2 class="sec-tt">Cierre de obra</h2>
+    <div class="cierre-card">
+      <div class="cl-h">${icon('alert')} Desviaciones</div>
+      <div class="desv-list">${desv}</div>
+      <div class="desv-form">
+        <select id="dvCat" class="dv-cat">${opts}</select>
+        <input id="dvTxt" class="dv-txt" type="text" placeholder="Detalle (ej: se usaron 50 m más de cable solar)">
+        <button class="dv-add" onclick="addDesv('${id}')">${icon('plus')} Agregar</button>
+      </div>
+    </div>
+    <div class="cierre-card">
+      <div class="cl-h">${icon('camera')} Fotos <span class="cl-ct">${o.fotos.length}/6</span></div>
+      ${fotos}
+      <label class="foto-btn">${icon('camera')} Agregar foto
+        <input type="file" accept="image/*" capture="environment" onchange="addFoto('${id}', this)" hidden>
+      </label>
+    </div>`;
+}
+function renderCierre(id){ const el=document.getElementById('cierre'); if(el) el.innerHTML=cierreHTML(id); }
+
+// ---------- date helpers ----------
+function sameDay(iso){ return iso.slice(0,10) === TODAY; }
+function within(iso, days){
+  const d = new Date(iso.slice(0,10)+"T00:00:00");
+  const t = new Date(TODAY+"T00:00:00");
+  const diff = (d - t)/86400000;
+  return diff >= 0 && diff <= days;
+}
+function sameMonth(iso){ return iso.slice(0,7) === TODAY.slice(0,7); }
+function filterList(f){
+  let arr = DB.installations.filter(x=>{
+    if(f==="dia") return sameDay(x.fecha);
+    if(f==="semana") return within(x.fecha,6);
+    return sameMonth(x.fecha);
+  });
+  arr.sort((a,b)=> a.fecha.localeCompare(b.fecha));
+  return arr;
+}
+function totalItems(matKey){
+  return obraGroups(matKey).reduce((s,g)=> s+g.items.length,0);
+}
+
+// ---------- HOME ----------
+const listEl = document.getElementById('list');
+const countEl = document.getElementById('count');
+const countLbl = document.getElementById('countlbl');
+let curFilter = "dia";
+
+function renderHome(){
+  // Actualizar nombre del instalador
+  document.getElementById('uname').textContent = DB.installer.nombre;
+  document.getElementById('avatar').textContent = DB.installer.iniciales;
+
+  const arr = filterList(curFilter);
+  countEl.textContent = arr.length;
+  countLbl.textContent = arr.length===1 ? "instalación" : "instalaciones";
+  if(!arr.length){
+    listEl.innerHTML = `<div class="empty"><span class="em">${icon('inbox')}</span>No hay instalaciones en este período.</div>`;
+    return;
+  }
+  listEl.innerHTML = arr.map(x=>{
+    const today = sameDay(x.fecha);
+    const total = totalItems(x.mats);
+    const est = estadoObra(x.id);
+    const estChip = est==='en_curso' ? '<span class="est-chip curso">En curso</span>'
+                  : est==='finalizada' ? '<span class="est-chip fin">Finalizada</span>' : '';
+    return `<div class="card ${x.kclass}" onclick="openDetail('${x.id}')">
+      <span class="accent"></span>
+      <div class="card-top">
+        <div>
+          <p class="cli">${x.cliente}${today?'<span class="pill-today">HOY</span>':''}</p>
+          <p class="sys">${x.sistema} · ${x.potencia}</p>
+        </div>
+        <div class="card-tags"><span class="kit-badge">${x.kit}</span>${estChip}</div>
+      </div>
+      <div class="card-row when"><span class="ic">${icon('calendar')}</span> ${x.fechaTxt} · ${x.hora} hs</div>
+      <div class="card-row"><span class="ic">${icon('pin')}</span> ${x.loc}</div>
+      <div class="card-row"><span class="ic">${icon('package')}</span> ${total} ítems para llevar</div>
+      <span class="chev">›</span>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('seg').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  [...e.currentTarget.children].forEach(c=>c.classList.remove('on'));
+  b.classList.add('on');
+  curFilter = b.dataset.f;
+  renderHome();
+});
+
+// ---------- DETAIL ----------
+const detailEl = document.getElementById('detail');
+
+function openDetail(id){
+  const x = DB.installations.find(i=>i.id===id);
+  if(!checks[id]) checks[id] = new Set();
+  const groups = obraGroups(x.mats);
+  const total = totalItems(x.mats);
+  const bbox = [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C');
+  const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${x.lat}%2C${x.lon}`;
+  const gmaps = `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`;
+  const online = navigator.onLine;
+  const mapBlock = online
+    ? `<div class="map"><iframe loading="lazy" src="${mapSrc}"></iframe></div>`
+    : `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`;
+  const allLoaded = checks[id].size >= total;
+
+  const groupsHtml = groups.map((g,gi)=>{
+    const ic = icon(CAT_IC[g.cat] || "package");
+    const isEquip = g.cat==="Equipos";
+    const isTools = g.cat==="Herramientas";
+    const items = g.items.map((it,ii)=>{
+      const key = g.cat+"|"+ii;
+      const done = checks[id].has(key);
+      return `<div class="item ${done?'done':''}" onclick="toggleItem('${id}','${g.cat.replace(/'/g,"")}',${ii},this)">
+        <div class="cbx">${done?'✓':''}</div>
+        <div class="nm">${it.n}</div>
+        ${it.c ? `<div class="qty">${it.c} ${it.u}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="grp ${isEquip?'equip open':''}${isTools?'tools open':''}">
+      <div class="grp-head" onclick="this.parentElement.classList.toggle('open')">
+        <span class="grp-ic">${ic}</span>
+        <span><div class="grp-tt">${g.cat}</div><div class="grp-ct">${g.items.length} ${isTools?'herramientas':'ítems'}</div></span>
+        <span class="grp-arrow">›</span>
+      </div>
+      <div class="grp-body">${items}</div>
+    </div>`;
+  }).join('');
+
+  detailEl.innerHTML = `
+    <div class="det-head">
+      <button class="back" onclick="closeDetail()">‹ Volver</button>
+      <h1 class="det-cli">${x.cliente}</h1>
+      <div class="det-tags">
+        <span class="tag">${x.kit}</span>
+        <span class="tag">${x.sistema}</span>
+        <span class="tag">${x.potencia}</span>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="info-card">
+        <div class="info-ic cal">${icon('calendar')}</div>
+        <div><div class="lbl">Fecha y hora</div>
+          <div class="val">${x.fechaTxt} · ${x.hora} hs</div>
+          <div class="sub">${fullDate(x.fecha)}</div></div>
+      </div>
+      <div class="info-card">
+        <div class="info-ic loc">${icon('pin')}</div>
+        <div><div class="lbl">Ubicación</div>
+          <div class="val">${x.dir}</div>
+          <div class="sub">${x.loc}</div></div>
+        <a class="maplink" href="${gmaps}" target="_blank" rel="noopener">Cómo llegar</a>
+      </div>
+    </div>
+    ${mapBlock}
+
+    <div id="estado" class="estado">${estadoHTML(id)}</div>
+
+    <div class="mat-head"><h2>Qué tenés que llevar</h2><span class="grp-ct">${total} ítems</span></div>
+    <div class="src-note ${x.confirmada?'':'est'}">${x.confirmada
+        ? '✓ Lista confirmada según cotización de la obra'
+        : '≈ Lista estimada según el tipo de kit (a confirmar)'}</div>
+
+    <div class="progress">
+      <div class="pt"><span>Cargado en la camioneta</span><span class="n" id="ptxt">0 / ${total}</span></div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+
+    <div class="groups">${groupsHtml}</div>
+
+    <div class="foot">
+      <button class="btn-done" id="btnAll" onclick="markAll('${id}')">${allLoaded ? 'Desmarcar todo' : 'Marcar todo como cargado'}</button>
+    </div>
+
+    <div id="cierre" class="cierre">${cierreHTML(id)}</div>
+  `;
+  detailEl.scrollTop = 0;
+  document.getElementById('home').classList.add('hide-left');
+  detailEl.classList.remove('hide-right');
+  updateProgress(id);
+}
+
+function fullDate(iso){
+  const dias=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const d=new Date(iso);
+  return `${dias[d.getDay()]} ${d.getDate()} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+function toggleItem(id, cat, ii, el){
+  const key = cat+"|"+ii;
+  if(checks[id].has(key)) checks[id].delete(key); else checks[id].add(key);
+  el.classList.toggle('done');
+  el.querySelector('.cbx').textContent = el.classList.contains('done') ? '✓' : '';
+  saveChecks();
+  updateProgress(id);
+}
+
+function totalFor(id){
+  const x = DB.installations.find(i=>i.id===id);
+  return totalItems(x.mats);
+}
+function updateProgress(id){
+  const total = totalFor(id);
+  const done = checks[id].size;
+  const bar = document.getElementById('pbar');
+  const txt = document.getElementById('ptxt');
+  const btn = document.getElementById('btnAll');
+  if(bar) bar.style.transform = `scaleX(${total ? done/total : 0})`;
+  if(txt) txt.textContent = `${done} / ${total}`;
+  if(btn) btn.textContent = (total>0 && done>=total) ? 'Desmarcar todo' : 'Marcar todo como cargado';
+}
+function markAll(id){
+  const x = DB.installations.find(i=>i.id===id);
+  const groups = obraGroups(x.mats);
+  const allDone = checks[id].size >= totalFor(id);
+  const prev = new Set(checks[id]);
+  checks[id] = new Set();
+  if(!allDone){
+    groups.forEach(g=> g.items.forEach((_,ii)=> checks[id].add(g.cat+"|"+ii)));
+  } else {
+    showToast('Se desmarcó todo.', ()=>{ checks[id] = prev; saveChecks(); openDetail(id); });
+  }
+  saveChecks();
+  openDetail(id);
+}
+
+function closeDetail(){
+  detailEl.classList.add('hide-right');
+  document.getElementById('home').classList.remove('hide-left');
+}
+
+// ============================================================
+//  ARRANQUE — verificar sesión primero
+// ============================================================
+checkSession();
+</script>
+</body>
+</html>
