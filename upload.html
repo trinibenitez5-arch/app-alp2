@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ALP Group · Cargar Obra</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
@@ -631,7 +631,8 @@ let instaladoresList = [];
 
 async function cargarAsignaciones() {
   // 1. Cargar instaladores
-  const { data: insts } = await sbClient.from('instaladores').select('id,nombre').order('nombre');
+  const { data: insts, error: errInst } = await sbClient.from('instaladores').select('id,nombre').order('nombre');
+  console.log('instaladores result:', JSON.stringify({data: insts, error: errInst}));
   instaladoresList = insts || [];
 
   // 2. Cargar obras
