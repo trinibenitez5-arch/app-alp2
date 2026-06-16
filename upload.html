@@ -140,24 +140,37 @@
   .estado-chip.finalizada{background:#dcfce7;color:#15803d}
   .empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px}
 
-  /* AUTOCOMPLETE DIRECCIÓN */
-  .ac-wrap{position:relative}
-  .ac-wrap input{width:100%}
-  .ac-list{position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff;
-    border:1px solid var(--line); border-radius:10px; box-shadow:0 14px 32px rgba(15,23,42,.16);
-    z-index:50; overflow:hidden auto; max-height:280px; display:none}
-  .ac-list.show{display:block}
-  .ac-item{display:flex; align-items:center; gap:11px; padding:11px 13px; cursor:pointer; border-bottom:1px solid var(--line)}
-  .ac-item:last-child{border-bottom:0}
-  .ac-item:hover, .ac-item.active{background:var(--green-l)}
-  .ac-pin{width:20px; height:20px; color:var(--muted); flex:none}
-  .ac-text{flex:1; min-width:0}
-  .ac-main{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .ac-sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-  .ac-empty{padding:12px 13px; font-size:13px; color:var(--muted)}
-  .ac-hint{font-size:11.5px; color:#94a3b8; margin-top:4px}
-  .ac-ok{font-size:11.5px; color:var(--green-d); margin-top:4px; font-weight:600; display:none}
-
+  /* ── MÉTRICAS ─────────────────────────────── */
+  .met-section{margin-bottom:16px}
+  .met-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+  .met-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .met-box{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .met-box.full{grid-column:1/-1}
+  .met-val{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--ink)}
+  .met-sub{font-size:12px;color:var(--muted);margin-top:3px}
+  .met-kit-row{display:flex;align-items:center;justify-content:space-between;
+    padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .met-kit-row:last-child{border-bottom:0}
+  .met-kit-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex:none}
+  .met-kit-badge.k-a{background:#dbeafe;color:#1d4ed8}
+  .met-kit-badge.k-b{background:#fef9c3;color:#92400e}
+  .met-kit-badge.k-c{background:#dcfce7;color:#15803d}
+  .met-bar-wrap{margin:6px 0 10px}
+  .met-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .met-bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden}
+  .met-bar-fill{height:100%;border-radius:999px;transition:.4s}
+  .rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .rank-row:last-child{border-bottom:0}
+  .rank-num{width:22px;height:22px;border-radius:50%;background:var(--green-l);color:var(--green-d);
+    font-size:11px;font-weight:800;display:grid;place-items:center;flex:none}
+  .rank-name{flex:1;font-weight:600}
+  .rank-val{color:var(--muted);font-size:12px}
+  .dev-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .dev-row:last-child{border-bottom:0}
+  .dev-mat{flex:1;color:var(--ink)}
+  .dev-planned{color:var(--muted);font-size:12px}
+  .dev-used{font-weight:700;color:#dc2626}
+  .dev-used.ok{color:var(--green-d)}
   @media(max-width:480px){
     .form-grid{grid-template-columns:1fr}
     .kit-grid{grid-template-columns:1fr}
@@ -184,7 +197,8 @@
   <!-- TABS -->
   <div class="tabs">
     <button class="tab active" id="tab1" onclick="switchTab(1)">📊 Cargar obra</button>
-    <button class="tab" id="tab2" onclick="switchTab(2)">👷 Asignar instaladores</button>
+    <button class="tab" id="tab2" onclick="switchTab(2)">👷 Asignar</button>
+    <button class="tab" id="tab3" onclick="switchTab(3)">📈 Métricas</button>
   </div>
 
   <!-- PANEL 1: CARGA -->
@@ -348,6 +362,35 @@
     </div>
   </div>
 
+
+  <!-- PANEL 3: MÉTRICAS -->
+  <div id="panel3" style="display:none">
+
+    <!-- RESUMEN GENERAL -->
+    <div class="card">
+      <div class="card-title"><span class="num" style="background:#6366f1">📋</span> Resumen general</div>
+      <div id="metResumen"><div class="empty-state">Cargando...</div></div>
+    </div>
+
+    <!-- TIEMPO -->
+    <div class="card">
+      <div class="card-title"><span class="num" style="background:#f59e0b">⏱</span> Tiempo</div>
+      <div id="metTiempo"><div class="empty-state">Cargando...</div></div>
+    </div>
+
+    <!-- MATERIALES -->
+    <div class="card">
+      <div class="card-title"><span class="num" style="background:#0ea5e9">📦</span> Materiales</div>
+      <div id="metMateriales"><div class="empty-state">Cargando...</div></div>
+    </div>
+
+    <!-- CALIDAD -->
+    <div class="card">
+      <div class="card-title"><span class="num" style="background:#dc2626">⚠️</span> Calidad</div>
+      <div id="metCalidad"><div class="empty-state">Cargando...</div></div>
+    </div>
+
+  </div><!-- /panel3 -->
 </div><!-- /wrap -->
 
 <script>
@@ -638,9 +681,12 @@ function showStatus(type, msg) {
 function switchTab(n) {
   document.getElementById('panel1').style.display = n===1 ? 'block' : 'none';
   document.getElementById('panel2').style.display = n===2 ? 'block' : 'none';
+  document.getElementById('panel3').style.display = n===3 ? 'block' : 'none';
   document.getElementById('tab1').classList.toggle('active', n===1);
   document.getElementById('tab2').classList.toggle('active', n===2);
+  document.getElementById('tab3').classList.toggle('active', n===3);
   if(n===2) cargarAsignaciones();
+  if(n===3) cargarMetricas();
 }
 
 // ============================================================
@@ -743,3 +789,278 @@ async function desasignar(obraId) {
 </script>
 </body>
 </html>
+<script>
+// ============================================================
+//  MÉTRICAS
+// ============================================================
+const KIT_COLORS = { 'Kit A':'#2563eb', 'Kit B':'#f59e0b', 'Kit C':'#16a34a' };
+const KIT_CLASS  = { 'Kit A':'k-a', 'Kit B':'k-b', 'Kit C':'k-c' };
+
+function fmtMin(min) {
+  if(!min && min!==0) return '—';
+  const h = Math.floor(min/60), m = Math.round(min%60);
+  return h ? `${h}h ${m}min` : `${m}min`;
+}
+
+async function cargarMetricas() {
+  // Mostrar loading en todas las secciones
+  ['metResumen','metTiempo','metMateriales','metCalidad'].forEach(id => {
+    document.getElementById(id).innerHTML = '<div class="empty-state">Cargando...</div>';
+  });
+
+  try {
+    // Cargar datos en paralelo
+    const [resObras, resJornadas, resMats, resMatsUsados, resDesv] = await Promise.all([
+      sbClient.from('obras').select('id,cliente,kit,kclass,localidad,instalador_id'),
+      sbClient.from('jornadas').select('obra_id,iniciada_at,finalizada_at'),
+      sbClient.from('materiales').select('obra_id,nombre,cantidad,categoria'),
+      sbClient.from('materiales_usados').select('obra_id,nombre,cantidad_usada,categoria'),
+      sbClient.from('desviaciones').select('obra_id,categoria')
+    ]);
+    const [resInst] = await Promise.all([
+      sbClient.from('instaladores').select('id,nombre')
+    ]);
+
+    const obras      = resObras.data || [];
+    const jornadas   = resJornadas.data || [];
+    const mats       = resMats.data || [];
+    const matsUsados = resMatsUsados.data || [];
+    const desvs      = resDesv.data || [];
+    const insts      = resInst.data || [];
+
+    const instMap = {};
+    insts.forEach(i => instMap[i.id] = i.nombre);
+
+    // Mapas útiles
+    const jornadaMap = {};
+    jornadas.forEach(j => jornadaMap[j.obra_id] = j);
+
+    const obraKit = {};
+    obras.forEach(o => obraKit[o.id] = o.kit);
+
+    // ── RESUMEN GENERAL ──────────────────────────────
+    const kits = [...new Set(obras.map(o => o.kit))].sort();
+    const completadas = obras.filter(o => jornadaMap[o.id]?.finalizada_at);
+    const pendientes  = obras.filter(o => !jornadaMap[o.id]?.finalizada_at);
+
+    // Por kit
+    const porKit = {};
+    obras.forEach(o => {
+      if(!porKit[o.kit]) porKit[o.kit] = { total:0, comp:0, kclass: o.kclass };
+      porKit[o.kit].total++;
+      if(jornadaMap[o.id]?.finalizada_at) porKit[o.kit].comp++;
+    });
+
+    // Top 5 localidades
+    const locCount = {};
+    obras.forEach(o => { locCount[o.localidad] = (locCount[o.localidad]||0)+1; });
+    const top5loc = Object.entries(locCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const maxLoc = top5loc[0]?.[1] || 1;
+
+    // Instalaciones por kit
+    const kitCount = {};
+    obras.forEach(o => { kitCount[o.kit] = (kitCount[o.kit]||0)+1; });
+    const maxKit = Math.max(...Object.values(kitCount), 1);
+
+    document.getElementById('metResumen').innerHTML = `
+      <div class="met-grid">
+        <div class="met-box">
+          <div class="met-val" style="color:var(--green)">${completadas.length}</div>
+          <div class="met-sub">Instalaciones completadas</div>
+        </div>
+        <div class="met-box">
+          <div class="met-val" style="color:#f59e0b">${pendientes.length}</div>
+          <div class="met-sub">Pendientes / en curso</div>
+        </div>
+      </div>
+
+      <div class="met-label">Completadas vs pendientes por kit</div>
+      ${Object.entries(porKit).map(([kit, d]) => `
+        <div class="met-kit-row">
+          <span class="met-kit-badge ${d.kclass}">${kit}</span>
+          <span style="flex:1;margin:0 10px">
+            <div style="height:6px;background:var(--line);border-radius:999px;overflow:hidden">
+              <div style="height:100%;width:${d.total?Math.round(d.comp/d.total*100):0}%;background:var(--green);border-radius:999px"></div>
+            </div>
+          </span>
+          <span style="font-size:12px;color:var(--muted)">${d.comp}/${d.total}</span>
+        </div>`).join('')}
+
+      <div class="met-label" style="margin-top:14px">Instalaciones por kit</div>
+      ${Object.entries(kitCount).map(([kit,n]) => `
+        <div class="met-bar-wrap">
+          <div class="met-bar-label"><span>${kit}</span><span>${n}</span></div>
+          <div class="met-bar"><div class="met-bar-fill" style="width:${Math.round(n/maxKit*100)}%;background:${KIT_COLORS[kit]||'#6366f1'}"></div></div>
+        </div>`).join('')}
+
+      <div class="met-label" style="margin-top:14px">Top 5 localidades</div>
+      ${top5loc.map(([loc,n],i) => `
+        <div class="rank-row">
+          <div class="rank-num">${i+1}</div>
+          <div class="rank-name">${loc}</div>
+          <div class="rank-val">${n} inst.</div>
+        </div>`).join('') || '<div class="empty-state">Sin datos</div>'}
+    `;
+
+    // ── TIEMPO ───────────────────────────────────────
+    // Duración por kit
+    const durKit = {};
+    jornadas.forEach(j => {
+      if(!j.iniciada_at || !j.finalizada_at) return;
+      const kit = obraKit[j.obra_id];
+      if(!kit) return;
+      const dur = (new Date(j.finalizada_at) - new Date(j.iniciada_at)) / 60000;
+      if(!durKit[kit]) durKit[kit] = [];
+      durKit[kit].push(dur);
+    });
+
+    // Ranking instaladores por tiempo promedio
+    const durInst = {};
+    jornadas.forEach(j => {
+      if(!j.iniciada_at || !j.finalizada_at) return;
+      const obra = obras.find(o => o.id === j.obra_id);
+      if(!obra) return;
+      const dur = (new Date(j.finalizada_at) - new Date(j.iniciada_at)) / 60000;
+      const key = obra.instalador_id + '|' + obra.kit;
+      if(!durInst[key]) durInst[key] = { instId: obra.instalador_id, kit: obra.kit, durs: [] };
+      durInst[key].durs.push(dur);
+    });
+
+    const rankData = Object.values(durInst).map(d => ({
+      nombre: instMap[d.instId] || 'Sin nombre',
+      kit: d.kit,
+      prom: Math.round(d.durs.reduce((a,b)=>a+b,0) / d.durs.length),
+      n: d.durs.length
+    })).sort((a,b) => a.prom - b.prom);
+
+    document.getElementById('metTiempo').innerHTML = `
+      <div class="met-label">Duración promedio por kit</div>
+      ${Object.keys(KIT_COLORS).map(kit => {
+        const durs = durKit[kit] || [];
+        const prom = durs.length ? Math.round(durs.reduce((a,b)=>a+b,0)/durs.length) : null;
+        return `<div class="met-kit-row">
+          <span class="met-kit-badge ${KIT_CLASS[kit]}">${kit}</span>
+          <span style="flex:1;margin-left:10px;color:var(--muted);font-size:12px">${durs.length} obras medidas</span>
+          <span style="font-weight:700">${fmtMin(prom)}</span>
+        </div>`;
+      }).join('')}
+
+      <div class="met-label" style="margin-top:14px">Ranking instaladores por tiempo promedio</div>
+      ${rankData.length === 0
+        ? '<div class="empty-state">Sin obras finalizadas con tiempo registrado</div>'
+        : rankData.map((r,i) => `
+        <div class="rank-row">
+          <div class="rank-num">${i+1}</div>
+          <div class="rank-name">${r.nombre}</div>
+          <span class="met-kit-badge ${KIT_CLASS[r.kit]}" style="margin-right:6px">${r.kit}</span>
+          <div class="rank-val">${fmtMin(r.prom)} (${r.n} obra${r.n>1?'s':''})</div>
+        </div>`).join('')}
+    `;
+
+    // ── MATERIALES ───────────────────────────────────
+    // Más frecuentes por kit
+    const matFreq = {};
+    mats.forEach(m => {
+      const kit = obraKit[m.obra_id];
+      if(!kit) return;
+      const key = kit + '|' + m.nombre;
+      matFreq[key] = (matFreq[key]||0) + (m.cantidad||1);
+    });
+    const topMats = Object.entries(matFreq).map(([k,n]) => {
+      const [kit, nombre] = k.split('|');
+      return { kit, nombre, n };
+    }).sort((a,b) => b.n - a.n).slice(0,8);
+
+    // Desvíos planificado vs usado
+    const desvMat = {};
+    mats.forEach(m => {
+      const key = m.nombre;
+      if(!desvMat[key]) desvMat[key] = { nombre: m.nombre, plan: 0, usado: 0 };
+      desvMat[key].plan += (m.cantidad||0);
+    });
+    matsUsados.forEach(m => {
+      if(!desvMat[m.nombre]) desvMat[m.nombre] = { nombre: m.nombre, plan: 0, usado: 0 };
+      desvMat[m.nombre].usado += (m.cantidad_usada||0);
+    });
+    const topDesvios = Object.values(desvMat)
+      .filter(d => d.plan > 0 && d.usado > 0)
+      .map(d => ({ ...d, diff: Math.abs(d.usado - d.plan) }))
+      .sort((a,b) => b.diff - a.diff).slice(0,5);
+
+    document.getElementById('metMateriales').innerHTML = `
+      <div class="met-label">Materiales más frecuentes por kit</div>
+      ${topMats.length === 0
+        ? '<div class="empty-state">Sin datos de materiales</div>'
+        : topMats.map(m => `
+        <div class="met-kit-row">
+          <span class="met-kit-badge ${KIT_CLASS[m.kit]}">${m.kit}</span>
+          <span style="flex:1;margin-left:8px">${m.nombre}</span>
+          <span style="font-weight:700;color:var(--muted);font-size:12px">${m.n} un.</span>
+        </div>`).join('')}
+
+      <div class="met-label" style="margin-top:14px">Top desvíos planificado vs usado</div>
+      ${topDesvios.length === 0
+        ? '<div class="empty-state">Sin datos de materiales usados todavía</div>'
+        : topDesvios.map(d => `
+        <div class="dev-row">
+          <div class="dev-mat">${d.nombre}</div>
+          <div class="dev-planned">Plan: ${d.plan}</div>
+          <div class="dev-used ${d.usado <= d.plan ? 'ok' : ''}">Usado: ${d.usado}</div>
+        </div>`).join('')}
+    `;
+
+    // ── CALIDAD ──────────────────────────────────────
+    // Tasa de imprevistos por kit
+    const obraConDesv = new Set(desvs.map(d => d.obra_id));
+    const tasaKit = {};
+    obras.forEach(o => {
+      if(!tasaKit[o.kit]) tasaKit[o.kit] = { total:0, conDesv:0, kclass:o.kclass };
+      tasaKit[o.kit].total++;
+      if(obraConDesv.has(o.id)) tasaKit[o.kit].conDesv++;
+    });
+
+    // Top 5 tipos de desviaciones
+    const desvTipo = {};
+    desvs.forEach(d => { desvTipo[d.categoria] = (desvTipo[d.categoria]||0)+1; });
+    const top5desv = Object.entries(desvTipo).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const maxDesv = top5desv[0]?.[1] || 1;
+
+    document.getElementById('metCalidad').innerHTML = `
+      <div class="met-label">Tasa de imprevistos por kit</div>
+      ${Object.entries(tasaKit).map(([kit, d]) => {
+        const tasa = d.total ? Math.round(d.conDesv/d.total*100) : 0;
+        return `<div class="met-kit-row">
+          <span class="met-kit-badge ${d.kclass}">${kit}</span>
+          <span style="flex:1;margin:0 10px">
+            <div style="height:6px;background:var(--line);border-radius:999px;overflow:hidden">
+              <div style="height:100%;width:${tasa}%;background:#dc2626;border-radius:999px"></div>
+            </div>
+          </span>
+          <span style="font-size:12px;font-weight:700;color:#dc2626">${tasa}%</span>
+        </div>`;
+      }).join('')}
+
+      <div class="met-label" style="margin-top:14px">Top 5 tipos de desviaciones</div>
+      ${top5desv.length === 0
+        ? '<div class="empty-state">Sin desviaciones registradas todavía</div>'
+        : top5desv.map(([tipo,n],i) => `
+        <div class="rank-row">
+          <div class="rank-num">${i+1}</div>
+          <div class="rank-name">${tipo}</div>
+          <div style="flex:1;margin:0 10px">
+            <div style="height:5px;background:var(--line);border-radius:999px;overflow:hidden">
+              <div style="height:100%;width:${Math.round(n/maxDesv*100)}%;background:#f59e0b;border-radius:999px"></div>
+            </div>
+          </div>
+          <div class="rank-val">${n} vez${n>1?'es':''}</div>
+        </div>`).join('')}
+    `;
+
+  } catch(err) {
+    console.error('Error métricas:', err);
+    ['metResumen','metTiempo','metMateriales','metCalidad'].forEach(id => {
+      document.getElementById(id).innerHTML = '<div class="empty-state" style="color:#dc2626">Error al cargar datos</div>';
+    });
+  }
+}
+</script>
