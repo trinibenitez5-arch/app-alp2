@@ -97,8 +97,9 @@
   .list-meta{display:flex; align-items:center; justify-content:space-between;
     padding:10px 22px 6px; font-size:12.5px; color:var(--muted)}
   .list-meta b{color:var(--ink)}
-  .sortbtn{display:flex;align-items:center;gap:4px;background:none;border:0;color:var(--muted);
-    font-size:12.5px;font-weight:600;cursor:pointer}
+  .sortlabel{display:flex;align-items:center;gap:5px;color:var(--muted);
+    font-size:12.5px;font-weight:600}
+  .sortlabel .i{width:14px;height:14px;opacity:.7}
 
   /* ---------- CARDS ---------- */
   .list{padding:6px 16px 30px; display:flex; flex-direction:column; gap:12px}
@@ -106,8 +107,6 @@
     padding:15px 15px 14px; cursor:pointer; border:1px solid var(--line);
     transition:transform .12s, box-shadow .12s; position:relative; overflow:hidden}
   .card:active{transform:scale(.985)}
-  .card .accent{position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--green)}
-  .card.k-b .accent{background:var(--sun)} .card.k-a .accent{background:var(--blue)}
   .card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
   .cli{font-size:16.5px; font-weight:700; letter-spacing:-.2px; margin:0}
   .sys{font-size:13px; color:var(--muted); margin:2px 0 0}
@@ -377,7 +376,7 @@
 
     <div class="list-meta">
       <span><b id="count">0</b> <span id="countlbl">instalaciones</span></span>
-      <span class="sortbtn">↕ Próximas primero</span>
+      <span class="sortlabel" id="sortlabel"></span>
     </div>
 
     <div class="list" id="list"></div>
@@ -393,8 +392,9 @@
   </div>
 
   <!-- OFFLINE BANNER -->
-  <div id="offline-banner" style="display:none;position:absolute;top:0;left:0;right:0;background:#f59e0b;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;gap:8px;align-items:center;z-index:99;text-align:center">
-    ⚠ Sin conexión · Mostrando datos de ejemplo
+  <div id="offline-banner" style="display:none;position:absolute;top:0;left:0;right:0;background:#f59e0b;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;gap:8px;align-items:center;justify-content:center;z-index:99">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>Sin conexión · Mostrando datos de ejemplo</span>
   </div>
 
   <!-- TOAST -->
@@ -1044,6 +1044,7 @@ function renderHome(){
   // Actualizar nombre del instalador
   document.getElementById('uname').textContent = DB.installer.nombre;
   document.getElementById('avatar').textContent = DB.installer.iniciales;
+  document.getElementById('sortlabel').innerHTML = `${icon('calendar')} Próximas primero`;
 
   const arr = filterList(curFilter);
   countEl.textContent = arr.length;
@@ -1059,7 +1060,6 @@ function renderHome(){
     const estChip = est==='en_curso' ? '<span class="est-chip curso">En curso</span>'
                   : est==='finalizada' ? '<span class="est-chip fin">Finalizada</span>' : '';
     return `<div class="card ${x.kclass}" onclick="openDetail('${x.id}')">
-      <span class="accent"></span>
       <div class="card-top">
         <div>
           <p class="cli">${x.cliente}${today?'<span class="pill-today">HOY</span>':''}</p>
