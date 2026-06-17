@@ -1091,13 +1091,20 @@ function openDetail(id){
   if(!checks[id]) checks[id] = new Set();
   const groups = obraGroups(x.mats);
   const total = totalItems(x.mats);
-  const bbox = [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C');
+  const hasCoords = (x.lat != null && x.lon != null && !isNaN(parseFloat(x.lat)) && !isNaN(parseFloat(x.lon)));
+  const destino = [x.dir, x.loc].filter(Boolean).join(', ');
+  const bbox = hasCoords ? [x.lon-0.012, x.lat-0.008, x.lon+0.012, x.lat+0.008].join('%2C') : '';
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${x.lat}%2C${x.lon}`;
-  const gmaps = `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`;
+  // "Cómo llegar": coordenadas exactas si las hay; si no, busca por la dirección escrita (nunca falla)
+  const gmaps = hasCoords
+    ? `https://www.google.com/maps/search/?api=1&query=${x.lat},${x.lon}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destino)}`;
   const online = navigator.onLine;
-  const mapBlock = online
+  const mapBlock = (online && hasCoords)
     ? `<div class="map"><iframe loading="lazy" src="${mapSrc}"></iframe></div>`
-    : `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`;
+    : (!online
+      ? `<div class="map map-off"><span class="mo-t">${icon('wifioff')} Mapa no disponible sin conexión</span><span class="mo-s">Usá la dirección y "Cómo llegar" de arriba</span></div>`
+      : `<div class="map map-off"><span class="mo-t">${icon('pin')} Tocá "Cómo llegar" para abrir el mapa</span><span class="mo-s">${destino}</span></div>`);
   const allLoaded = checks[id].size >= total;
 
   const groupsHtml = groups.map((g,gi)=>{
