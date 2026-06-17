@@ -39,9 +39,9 @@
     text-align:center; cursor:pointer; transition:.2s; position:relative}
   .drop-zone:hover, .drop-zone.drag{border-color:var(--green); background:var(--green-l)}
   .drop-zone input{position:absolute; inset:0; opacity:0; cursor:pointer; width:100%}
-  .drop-icon{font-size:32px; margin-bottom:8px}
+  .drop-icon{display:flex; justify-content:center; color:#64748b; margin-bottom:10px}
   .drop-txt{font-size:14px; font-weight:600; color:var(--muted)}
-  .drop-sub{font-size:12px; color:#94a3b8; margin-top:4px}
+  .drop-sub{font-size:12px; color:#64748b; margin-top:4px}
   .file-selected{display:flex; align-items:center; gap:10px; background:var(--green-l);
     border:1px solid #86efac; border-radius:10px; padding:12px 14px; margin-top:12px}
   .file-selected .fname{font-size:14px; font-weight:600; color:var(--green-d); flex:1}
@@ -111,7 +111,8 @@
   /* ── TABS ─────────────────────────────── */
   .tabs{display:flex;background:#f1f5f9;border-radius:14px;padding:4px;margin-bottom:24px;gap:4px}
   .tab{flex:1;border:0;background:transparent;border-radius:10px;padding:10px;font-size:14px;
-    font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+    font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px}
   .tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(15,23,42,.1)}
 
   /* ── ASIGNACIONES ─────────────────────── */
@@ -143,6 +144,8 @@
   /* ── MÉTRICAS ─────────────────────────────── */
   .met-section{margin-bottom:16px}
   .met-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+  /* separador entre subsecciones dentro de una misma tarjeta */
+  .met-label.sep{border-top:1px solid var(--line);padding-top:16px;margin-top:20px}
   .met-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
   .met-box{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px}
   .met-box.full{grid-column:1/-1}
@@ -172,6 +175,31 @@
   .dev-used{font-weight:700;color:#dc2626}
   .dev-used.ok{color:var(--green-d)}
 
+  /* === MÉTRICAS: filtro de período === */
+  .met-period{display:flex; gap:6px; background:#f1f5f9; padding:4px; border-radius:12px; margin-bottom:18px}
+  .mp-btn{flex:1; border:0; background:transparent; padding:10px; border-radius:9px; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; font-family:inherit}
+  .mp-btn.active{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(15,23,42,.12)}
+  /* pie / donut */
+  .pie-wrap{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .pie-svg{width:140px; height:140px; flex:none}
+  .pie-total{font-size:30px; font-weight:800; fill:var(--ink)}
+  .pie-totlbl{font-size:10px; fill:var(--muted)}
+  .pie-legend{display:flex; flex-direction:column; gap:9px; flex:1; min-width:150px}
+  .pie-leg{display:flex; align-items:center; gap:8px; font-size:13px}
+  .pie-dot{width:12px; height:12px; border-radius:50%; flex:none}
+  .pie-pct{color:var(--muted); font-size:12px}
+  /* barras apiladas: completadas vs pendientes */
+  .stack-chart{display:flex; align-items:flex-end; justify-content:space-around; gap:12px; height:170px; padding-top:6px}
+  .stack-col{display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; max-width:90px; height:100%; justify-content:flex-end}
+  .stack-cnt{font-size:12px; font-weight:700; color:var(--ink)}
+  .stack-bar{width:44px; display:flex; flex-direction:column; border-radius:8px; overflow:hidden; background:var(--line)}
+  .stack-pend{width:100%; opacity:.25}
+  .stack-done{width:100%}
+  .stack-legend{display:flex; gap:18px; justify-content:center; margin-top:14px; font-size:12px; color:var(--muted)}
+  .stack-legend > span{display:inline-flex; align-items:center; gap:6px}
+  .sl-box{width:12px; height:12px; border-radius:3px; display:inline-block; background:#64748b}
+  .sl-box.light{opacity:.25}
+
   /* AUTOCOMPLETE DIRECCIÓN */
   .ac-wrap{position:relative}
   .ac-wrap input{width:100%}
@@ -187,8 +215,41 @@
   .ac-main{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .ac-sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .ac-empty{padding:12px 13px; font-size:13px; color:var(--muted)}
-  .ac-hint{font-size:11.5px; color:#94a3b8; margin-top:4px}
+  .ac-hint{font-size:11.5px; color:#64748b; margin-top:4px}
   .ac-ok{font-size:11.5px; color:var(--green-d); margin-top:4px; font-weight:600; display:none}
+
+  /* ICONOS SVG (línea, currentColor) — mismo set que la app del instalador */
+  .ic-svg{width:16px; height:16px; flex:none; vertical-align:-3px}
+  .num .ic-svg{width:14px; height:14px; vertical-align:0}
+  .tab .ic-svg{width:17px; height:17px}
+  .btn .ic-svg{width:18px; height:18px}
+  .status-icon .ic-svg{width:19px; height:19px}
+  .drop-icon .ic-svg{width:38px; height:38px}
+  .assigned-chip .ic-svg{width:16px; height:16px}
+  .card-title .ic-svg{width:17px; height:17px}
+
+  /* TOAST (feedback inline, mismo vocabulario que .status) */
+  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(10px);
+    max-width:calc(100% - 32px); z-index:1000; opacity:0; pointer-events:none;
+    box-shadow:0 12px 32px rgba(15,23,42,.18);
+    transition:opacity .2s ease-out, transform .2s ease-out}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  @media(prefers-reduced-motion:reduce){ .toast{transition:opacity .15s} .toast.show{transform:translateX(-50%)} }
+  .assign-select.err{border-color:var(--red); box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+
+  /* confirmación inline al desasignar */
+  .assigned-chip.confirm{background:var(--red-l); border-color:#fca5a5; color:var(--red)}
+  .chip-confirm-q{flex:1; font-weight:700}
+  .chip-yes{border:0; background:var(--red); color:#fff; border-radius:8px; padding:6px 12px; font-size:13px; font-weight:700; cursor:pointer}
+  .chip-no{border:0; background:none; color:var(--muted); font-weight:700; font-size:13px; cursor:pointer; padding:6px 10px}
+
+  /* MÉTRICAS en desktop: 2 columnas tipo masonry (solo en la pestaña Métricas) */
+  @media(min-width:900px){
+    .wrap--wide{max-width:1040px}
+    .wrap--wide #panel3{column-count:2; column-gap:18px}
+    .wrap--wide #panel3 > .card{break-inside:avoid; margin-bottom:18px}
+    .wrap--wide #panel3 > .met-period{column-span:all}
+  }
 
   @media(max-width:480px){
     .form-grid{grid-template-columns:1fr}
@@ -215,9 +276,9 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab active" id="tab1" onclick="switchTab(1)">📊 Cargar obra</button>
-    <button class="tab" id="tab2" onclick="switchTab(2)">👷 Asignar</button>
-    <button class="tab" id="tab3" onclick="switchTab(3)">📈 Métricas</button>
+    <button class="tab active" id="tab1" onclick="switchTab(1)"><span data-icon="upload"></span>Cargar obra</button>
+    <button class="tab" id="tab2" onclick="switchTab(2)"><span data-icon="users"></span>Asignar</button>
+    <button class="tab" id="tab3" onclick="switchTab(3)"><span data-icon="chart"></span>Métricas</button>
   </div>
 
   <!-- PANEL 1: CARGA -->
@@ -228,12 +289,12 @@
     <div class="card-title"><span class="num">1</span> Subí la cotización Excel</div>
     <div class="drop-zone" id="dropZone">
       <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this.files[0])"/>
-      <div class="drop-icon">📊</div>
+      <div class="drop-icon" data-icon="upload"></div>
       <div class="drop-txt">Tocá para elegir el archivo Excel</div>
       <div class="drop-sub">Cotización ALP (.xlsx)</div>
     </div>
     <div class="file-selected" id="fileInfo" style="display:none">
-      <span>📄</span>
+      <span data-icon="file" style="color:var(--green-d)"></span>
       <span class="fname" id="fileName"></span>
       <span class="fsize" id="fileSize"></span>
     </div>
@@ -271,7 +332,7 @@
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px">
       <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px">Lista de materiales</span>
-      <button onclick="toggleEditMats()" id="btnEditMats" style="border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer">✏️ Editar</button>
+      <button onclick="toggleEditMats()" id="btnEditMats" style="border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;display:inline-flex;align-items:center;gap:5px"><span data-icon="edit"></span>Editar</button>
     </div>
     <div class="items-list" id="itemsList"></div>
 
@@ -320,7 +381,7 @@
           <div class="ac-list" id="acList"></div>
         </div>
         <div class="ac-hint" id="acHint">Escribí y elegí una opción para autocompletar la localidad y ubicar el mapa.</div>
-        <div class="ac-ok" id="acOk">✓ Ubicación seleccionada (mapa exacto)</div>
+        <div class="ac-ok" id="acOk"><span data-icon="check"></span> Ubicación seleccionada (mapa exacto)</div>
       </div>
     </div>
 
@@ -357,7 +418,7 @@
     </div>
 
     <button class="btn btn-primary" id="btnCargar" onclick="cargarObra()">
-      ⚡ Crear obra en la app
+      <span data-icon="zap"></span>Crear obra en la app
     </button>
     <div id="statusMsg" style="display:none"></div>
   </div>
@@ -368,7 +429,7 @@
   <div id="panel2" style="display:none">
     <div class="card">
       <div class="card-title">
-        <span class="num" style="background:var(--blue)">👷</span>
+        <span class="num" data-icon="users" style="background:var(--blue)"></span>
         Obras sin instalador asignado
       </div>
       <div id="obrasSinAsignar">
@@ -377,7 +438,7 @@
     </div>
     <div class="card" style="margin-top:0">
       <div class="card-title">
-        <span class="num" style="background:#6366f1">✓</span>
+        <span class="num" data-icon="check" style="background:#6366f1"></span>
         Obras asignadas
       </div>
       <div id="obrasAsignadas">
@@ -390,27 +451,33 @@
   <!-- PANEL 3: MÉTRICAS -->
   <div id="panel3" style="display:none">
 
+    <div class="met-period">
+      <button class="mp-btn" data-p="mes" onclick="setPeriodo('mes')">Este mes</button>
+      <button class="mp-btn" data-p="trim" onclick="setPeriodo('trim')">Trimestre</button>
+      <button class="mp-btn active" data-p="todo" onclick="setPeriodo('todo')">Todo</button>
+    </div>
+
     <!-- RESUMEN GENERAL -->
     <div class="card">
-      <div class="card-title"><span class="num" style="background:#6366f1">📋</span> Resumen general</div>
+      <div class="card-title"><span class="num" data-icon="clipboard" style="background:#6366f1"></span> Resumen general</div>
       <div id="metResumen"><div class="empty-state">Cargando...</div></div>
     </div>
 
     <!-- TIEMPO -->
     <div class="card">
-      <div class="card-title"><span class="num" style="background:#f59e0b">⏱</span> Tiempo</div>
+      <div class="card-title"><span class="num" data-icon="clock" style="background:#0d9488"></span> Tiempo</div>
       <div id="metTiempo"><div class="empty-state">Cargando...</div></div>
     </div>
 
     <!-- MATERIALES -->
     <div class="card">
-      <div class="card-title"><span class="num" style="background:#0ea5e9">📦</span> Materiales</div>
+      <div class="card-title"><span class="num" data-icon="package" style="background:#0ea5e9"></span> Materiales</div>
       <div id="metMateriales"><div class="empty-state">Cargando...</div></div>
     </div>
 
     <!-- CALIDAD -->
     <div class="card">
-      <div class="card-title"><span class="num" style="background:#dc2626">⚠️</span> Calidad</div>
+      <div class="card-title"><span class="num" data-icon="alert" style="background:#dc2626"></span> Calidad</div>
       <div id="metCalidad"><div class="empty-state">Cargando...</div></div>
     </div>
 
@@ -432,44 +499,110 @@ let selectedKit = 'C';
 let selLat = null, selLon = null;
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+/* ====== ICONOS (SVG de línea, currentColor) — mismo set que la app del instalador ====== */
+const ICONS = {
+  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  chart:'<line x1="3" y1="21" x2="21" y2="21"/><rect x="5" y="11" width="3" height="8" rx="1"/><rect x="10.5" y="6" width="3" height="13" rx="1"/><rect x="16" y="14" width="3" height="5" rx="1"/>',
+  clipboard:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  edit:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>',
+  package:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  alert:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'
+};
+function icon(name){
+  return `<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]||ICONS.package}</svg>`;
+}
+
 /* ====== AUTOCOMPLETADO DE DIRECCIÓN (Photon · OpenStreetMap, sin clave) ====== */
 let acTimer = null;
+let acActive = -1; // índice de la opción resaltada por teclado (-1 = ninguna)
 const acInput = document.getElementById('fDireccion');
 const acListEl = document.getElementById('acList');
+
+// ARIA: patrón combobox + listbox (navegable por teclado y lector de pantalla)
+acInput.setAttribute('role', 'combobox');
+acInput.setAttribute('aria-autocomplete', 'list');
+acInput.setAttribute('aria-controls', 'acList');
+acInput.setAttribute('aria-expanded', 'false');
+acListEl.setAttribute('role', 'listbox');
+acListEl.setAttribute('aria-label', 'Sugerencias de dirección');
+
+function acItems() { return [...acListEl.querySelectorAll('.ac-item')]; }
+function acOpen()  { acListEl.classList.add('show'); acInput.setAttribute('aria-expanded', 'true'); }
+function acClose() {
+  acListEl.classList.remove('show');
+  acInput.setAttribute('aria-expanded', 'false');
+  acInput.removeAttribute('aria-activedescendant');
+  acActive = -1;
+}
+function acSetActive(i) {
+  const items = acItems();
+  if(!items.length) { acActive = -1; return; }
+  acActive = (i + items.length) % items.length; // envuelve arriba/abajo
+  items.forEach((el, idx) => {
+    const on = idx === acActive;
+    el.classList.toggle('active', on);
+    el.setAttribute('aria-selected', on ? 'true' : 'false');
+    if(on) { acInput.setAttribute('aria-activedescendant', el.id); el.scrollIntoView({ block: 'nearest' }); }
+  });
+}
+
 acInput.addEventListener('input', () => {
   selLat = null; selLon = null;
   document.getElementById('acOk').style.display = 'none';
   document.getElementById('acHint').style.display = 'block';
   const q = acInput.value.trim();
   clearTimeout(acTimer);
-  if(q.length < 3) { acListEl.classList.remove('show'); return; }
+  if(q.length < 3) { acClose(); return; }
   acTimer = setTimeout(() => buscarDireccion(q), 350);
 });
-acInput.addEventListener('blur', () => setTimeout(() => acListEl.classList.remove('show'), 150));
-acInput.addEventListener('keydown', e => { if(e.key === 'Escape') acListEl.classList.remove('show'); });
+acInput.addEventListener('blur', () => setTimeout(() => acClose(), 150));
+acInput.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { acClose(); return; }
+  if(!acListEl.classList.contains('show')) {
+    // si hay texto y la lista está cerrada, ↓ la reabre
+    if(e.key === 'ArrowDown' && acInput.value.trim().length >= 3) buscarDireccion(acInput.value.trim());
+    return;
+  }
+  const items = acItems();
+  if(e.key === 'ArrowDown')      { e.preventDefault(); acSetActive(acActive + 1); }
+  else if(e.key === 'ArrowUp')   { e.preventDefault(); acSetActive(acActive - 1); }
+  else if(e.key === 'Enter' && acActive >= 0 && items[acActive]) { e.preventDefault(); elegirDireccion(items[acActive]); }
+});
+
 async function buscarDireccion(q) {
   try {
     const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lat=-34.60&lon=-58.42`;
     const res = await fetch(url);
     const data = await res.json();
     renderAc((data && data.features) ? data.features : []);
-  } catch(err) { acListEl.classList.remove('show'); }
+  } catch(err) {
+    acListEl.innerHTML = '<div class="ac-empty">No se pudo buscar la dirección. Revisá tu conexión.</div>';
+    acOpen();
+  }
 }
 function renderAc(feats) {
+  acActive = -1;
+  acInput.removeAttribute('aria-activedescendant');
   if(!feats.length) {
     acListEl.innerHTML = '<div class="ac-empty">Sin resultados. Probá con calle y número.</div>';
-    acListEl.classList.add('show'); return;
+    acOpen(); return;
   }
-  acListEl.innerHTML = feats.map(f => {
+  acListEl.innerHTML = feats.map((f, idx) => {
     const p = f.properties, c = f.geometry.coordinates; // [lon, lat]
     const calle = [p.street || p.name, p.housenumber].filter(Boolean).join(' ');
     const loc = [p.city || p.district || p.locality || p.county, p.state].filter(Boolean).join(', ');
-    return `<div class="ac-item" data-lat="${c[1]}" data-lon="${c[0]}" data-dir="${esc(calle || p.name || '')}" data-loc="${esc(loc)}" onmousedown="elegirDireccion(this)">
-      <svg class="ac-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    return `<div class="ac-item" id="ac-opt-${idx}" role="option" aria-selected="false" data-lat="${c[1]}" data-lon="${c[0]}" data-dir="${esc(calle || p.name || '')}" data-loc="${esc(loc)}" onmousedown="elegirDireccion(this)">
+      <svg class="ac-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       <div class="ac-text"><div class="ac-main">${esc(calle || p.name || '')}</div><div class="ac-sub">${esc(loc || p.country || '')}</div></div>
     </div>`;
   }).join('');
-  acListEl.classList.add('show');
+  acOpen();
 }
 function elegirDireccion(el) {
   document.getElementById('fDireccion').value = el.getAttribute('data-dir');
@@ -477,7 +610,7 @@ function elegirDireccion(el) {
   if(loc) document.getElementById('fLocalidad').value = loc;
   selLat = parseFloat(el.getAttribute('data-lat'));
   selLon = parseFloat(el.getAttribute('data-lon'));
-  acListEl.classList.remove('show');
+  acClose();
   document.getElementById('acHint').style.display = 'none';
   document.getElementById('acOk').style.display = 'block';
 }
@@ -510,7 +643,7 @@ function handleFile(file) {
       parsedData = parseExcel(rows);
       showPreview(parsedData);
     } catch(err) {
-      showStatus('error', '❌ No se pudo leer el archivo. Verificá que sea un Excel de cotización ALP.');
+      showStatus('error', 'No se pudo leer el archivo. Verificá que sea un Excel de cotización ALP.');
     }
   };
   reader.readAsArrayBuffer(file);
@@ -607,7 +740,7 @@ function renderMatsEditor() {
       <span class="item-cat" style="cursor:default">${i.cat}</span>
       <span class="item-name" style="font-size:13px">${i.nombre}</span>
       <span class="item-qty">${i.cantidad} ${i.unidad}</span>
-      <button onclick="eliminarItem(${idx})" style="border:0;background:none;color:#dc2626;cursor:pointer;font-size:16px;flex:none;padding:0 4px" title="Eliminar">&#x2715;</button>
+      <button onclick="eliminarItem(${idx})" style="border:0;background:none;color:#dc2626;cursor:pointer;flex:none;padding:0 4px;display:inline-flex;align-items:center" title="Eliminar">${icon('x')}</button>
     </div>`).join('');
 }
 
@@ -616,7 +749,7 @@ function toggleEditMats() {
   const btn = document.getElementById('btnEditMats');
   const visible = ed.style.display !== 'none';
   ed.style.display = visible ? 'none' : 'block';
-  btn.textContent = visible ? '✏️ Editar' : '✓ Cerrar editor';
+  btn.innerHTML = visible ? `${icon('edit')}Editar` : `${icon('check')}Cerrar editor`;
   if(!visible) renderMatsEditor();
 }
 
@@ -633,7 +766,7 @@ function agregarItem() {
   const un = document.getElementById('newUn').value;
   const cat = document.getElementById('newCat').value;
   if(!desc || isNaN(cant) || cant <= 0) {
-    alert('Completá descripción y cantidad válida.');
+    toast('error', 'Completá una descripción y una cantidad válida.');
     return;
   }
   parsedData.items.push({ cat, nombre: desc, cantidad: cant, unidad: un });
@@ -669,7 +802,7 @@ function fechaTxt(fechaStr) {
 }
 
 async function cargarObra() {
-  if(!parsedData) return showStatus('error', '❌ Primero subí un archivo Excel.');
+  if(!parsedData) return showStatus('error', 'Primero subí un archivo Excel.');
 
   const fecha = document.getElementById('fFecha').value;
   const hora = document.getElementById('fHora').value;
@@ -677,9 +810,10 @@ async function cargarObra() {
   const loc = document.getElementById('fLocalidad').value.trim();
   const confirmada = document.getElementById('fConfirmada').value === 'true';
 
-  if(!fecha) return showStatus('error', '❌ Completá la fecha de instalación.');
-  if(!dir) return showStatus('error', '❌ Completá la dirección.');
-  if(!loc) return showStatus('error', '❌ Completá la localidad.');
+  if(!fecha) return showStatus('error', 'Completá la fecha de instalación.');
+  if(!dir) return showStatus('error', 'Completá la dirección.');
+  if(!loc) return showStatus('error', 'Completá la localidad.');
+  if(!parsedData.items.length) return showStatus('error', 'La obra no tiene materiales. Revisá el Excel o agregá ítems antes de crearla.');
 
   // Leer valores editados del paso 2
   const clienteEdit = document.getElementById('prevCliente').value.trim() || parsedData.cliente;
@@ -689,7 +823,7 @@ async function cargarObra() {
   ki.sistema = sistemaEdit;
   const btn = document.getElementById('btnCargar');
   btn.disabled = true;
-  showStatus('loading', '⏳ Creando obra en Supabase...');
+  showStatus('loading', 'Creando obra en Supabase…');
 
   try {
     // 1. Insertar obra
@@ -716,7 +850,7 @@ async function cargarObra() {
 
     if(errObra) throw errObra;
 
-    showStatus('loading', `⏳ Cargando ${parsedData.items.length} materiales...`);
+    showStatus('loading', `Cargando ${parsedData.items.length} materiales…`);
 
     // 2. Insertar materiales en lotes de 50
     const mats = parsedData.items.map(i => ({
@@ -735,24 +869,38 @@ async function cargarObra() {
     }
 
     showStatus('success',
-      `✅ ¡Obra creada! "${clienteEdit}" aparece ahora en la app del instalador con ${parsedData.items.length} materiales cargados.`);
+      `¡Obra creada! "${clienteEdit}" aparece ahora en la app del instalador con ${parsedData.items.length} materiales cargados.`);
 
-    btn.textContent = '✓ Obra creada correctamente';
+    btn.innerHTML = `${icon('check')}Obra creada correctamente`;
 
   } catch(err) {
     console.error(err);
-    showStatus('error', '❌ Error al guardar: ' + (err.message || JSON.stringify(err)));
+    showStatus('error', 'No se pudo guardar la obra. Revisá tu conexión y probá de nuevo.');
     btn.disabled = false;
-    btn.textContent = '⚡ Crear obra en la app';
+    btn.innerHTML = `${icon('zap')}Crear obra en la app`;
   }
 }
 
 function showStatus(type, msg) {
   const el = document.getElementById('statusMsg');
+  const ic = type === 'success' ? 'check' : type === 'error' ? 'alert' : 'clock';
   el.className = 'status ' + type;
-  el.innerHTML = msg;
+  el.innerHTML = `<span class="status-icon">${icon(ic)}</span><span>${msg}</span>`;
   el.style.display = 'flex';
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Toast: feedback transitorio inline (reemplaza los alert() nativos)
+let _toastTimer = null;
+function toast(type, msg) {
+  let el = document.getElementById('toast');
+  if(!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+  const ic = type === 'success' ? 'check' : type === 'error' ? 'alert' : 'clock';
+  el.className = 'toast status ' + type;
+  el.innerHTML = `<span class="status-icon">${icon(ic)}</span><span>${msg}</span>`;
+  requestAnimationFrame(() => el.classList.add('show'));
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
 }
 
 // ============================================================
@@ -762,6 +910,7 @@ function switchTab(n) {
   document.getElementById('panel1').style.display = n===1 ? 'block' : 'none';
   document.getElementById('panel2').style.display = n===2 ? 'block' : 'none';
   document.getElementById('panel3').style.display = n===3 ? 'block' : 'none';
+  document.querySelector('.wrap').classList.toggle('wrap--wide', n===3);
   document.getElementById('tab1').classList.toggle('active', n===1);
   document.getElementById('tab2').classList.toggle('active', n===2);
   document.getElementById('tab3').classList.toggle('active', n===3);
@@ -798,7 +947,7 @@ async function cargarAsignaciones() {
 
   // Renderizar sin asignar
   document.getElementById('obrasSinAsignar').innerHTML = sinAsignar.length === 0
-    ? '<div class="empty-state">✓ Todas las obras tienen instalador asignado.</div>'
+    ? `<div class="empty-state">${icon('check')} Todas las obras tienen instalador asignado.</div>`
     : sinAsignar.map(o => obraCardHTML(o, false)).join('');
 
   // Renderizar asignadas
@@ -829,8 +978,8 @@ function obraCardHTML(obra, asignada, nombreInst) {
       <span class="obra-badge ${obra.kclass}">${obra.kit}</span>
     </div>
     ${asignada
-      ? `<div class="assigned-chip">👷 ${nombreInst || 'Instalador asignado'}
-           <button onclick="desasignar('${obra.id}')" style="margin-left:auto;border:0;background:none;color:#dc2626;cursor:pointer;font-weight:700;font-size:13px">Cambiar</button>
+      ? `<div class="assigned-chip" id="chip-${obra.id}">${icon('users')} <span style="flex:1">${nombreInst || 'Instalador asignado'}</span>
+           <button onclick="pedirDesasignar('${obra.id}')" style="border:0;background:none;color:#dc2626;cursor:pointer;font-weight:700;font-size:13px">Cambiar</button>
          </div>`
       : `<div class="assign-row">
           <select class="assign-select" id="sel-${obra.id}">
@@ -846,24 +995,46 @@ function obraCardHTML(obra, asignada, nombreInst) {
 async function asignar(obraId) {
   const sel = document.getElementById('sel-' + obraId);
   const instId = sel.value;
-  if(!instId) { alert('Elegí un instalador primero.'); return; }
+  if(!instId) {
+    sel.classList.add('err');
+    sel.addEventListener('change', () => sel.classList.remove('err'), { once: true });
+    sel.focus();
+    toast('error', 'Elegí un instalador antes de asignar.');
+    return;
+  }
   sel.disabled = true;
   const btn = sel.nextElementSibling;
-  btn.disabled = true; btn.textContent = '...';
+  btn.disabled = true; btn.textContent = '…';
 
   const { error } = await sbClient.from('obras').update({ instalador_id: instId }).eq('id', obraId);
   if(error) {
-    alert('Error al asignar: ' + error.message);
+    console.error('Error al asignar:', error);
+    toast('error', 'No se pudo asignar. Revisá tu conexión y probá de nuevo.');
     sel.disabled = false; btn.disabled = false; btn.textContent = 'Asignar';
     return;
   }
-  // Recargar panel
+  toast('success', 'Instalador asignado.');
   cargarAsignaciones();
+}
+
+function pedirDesasignar(obraId) {
+  const chip = document.getElementById('chip-' + obraId);
+  if(!chip) return;
+  chip.classList.add('confirm');
+  chip.innerHTML = `${icon('alert')}<span class="chip-confirm-q">¿Quitar el instalador?</span>
+    <button class="chip-yes" onclick="desasignar('${obraId}')">Sí, quitar</button>
+    <button class="chip-no" onclick="cargarAsignaciones()">No</button>`;
 }
 
 async function desasignar(obraId) {
   const { error } = await sbClient.from('obras').update({ instalador_id: null }).eq('id', obraId);
-  if(!error) cargarAsignaciones();
+  if(error) {
+    console.error('Error al desasignar:', error);
+    toast('error', 'No se pudo quitar el instalador. Probá de nuevo.');
+    return;
+  }
+  toast('success', 'Instalador quitado. La obra volvió a "sin asignar".');
+  cargarAsignaciones();
 }
 
 
@@ -879,6 +1050,40 @@ function fmtMin(min) {
   return h ? `${h}h ${m}min` : `${m}min`;
 }
 
+let metPeriodo = 'todo';
+let _matsPorKit = {};
+function setPeriodo(p){
+  metPeriodo = p;
+  document.querySelectorAll('.mp-btn').forEach(b => b.classList.toggle('active', b.dataset.p === p));
+  cargarMetricas();
+}
+function periodoStart(p){
+  const d = new Date();
+  if(p === 'mes')  return new Date(d.getFullYear(), d.getMonth(), 1);
+  if(p === 'trim'){ const s = new Date(d); s.setMonth(s.getMonth() - 3); return s; }
+  return null; // todo
+}
+function donutHTML(entries, total){
+  if(!total) return '<div class="empty-state">Sin datos</div>';
+  const R = 54, C = 2 * Math.PI * R, cx = 70, cy = 70, sw = 24;
+  let off = 0;
+  const segs = entries.map(([kit, n]) => {
+    const len = C * (n / total);
+    const s = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${KIT_COLORS[kit] || '#6366f1'}" stroke-width="${sw}" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    off += len; return s;
+  }).join('');
+  const leg = entries.map(([kit, n]) => `<div class="pie-leg"><span class="pie-dot" style="background:${KIT_COLORS[kit] || '#6366f1'}"></span><span>${kit}</span><b>${n}</b><span class="pie-pct">${Math.round(n / total * 100)}%</span></div>`).join('');
+  return `<div class="pie-wrap"><svg viewBox="0 0 140 140" class="pie-svg">${segs}<text x="70" y="66" text-anchor="middle" class="pie-total">${total}</text><text x="70" y="84" text-anchor="middle" class="pie-totlbl">obras en total</text></svg><div class="pie-legend">${leg}</div></div>`;
+}
+function renderMatsKit(kit){
+  const arr = _matsPorKit[kit] || [];
+  const el = document.getElementById('metMatList');
+  if(!el) return;
+  el.innerHTML = arr.length === 0
+    ? '<div class="empty-state">Sin materiales para este kit</div>'
+    : arr.slice(0, 12).map(m => `<div class="met-kit-row"><span style="flex:1">${esc(m.nombre)}</span><span style="font-weight:700;color:var(--muted);font-size:12px">${m.n} un.</span></div>`).join('');
+}
+
 async function cargarMetricas() {
   // Mostrar loading en todas las secciones
   ['metResumen','metTiempo','metMateriales','metCalidad'].forEach(id => {
@@ -888,7 +1093,7 @@ async function cargarMetricas() {
   try {
     // Cargar datos en paralelo
     const [resObras, resJornadas, resMats, resMatsUsados, resDesv] = await Promise.all([
-      sbClient.from('obras').select('id,cliente,kit,kclass,localidad,instalador_id'),
+      sbClient.from('obras').select('id,cliente,kit,kclass,localidad,instalador_id,fecha'),
       sbClient.from('jornadas').select('obra_id,iniciada_at,finalizada_at'),
       sbClient.from('materiales').select('obra_id,nombre,cantidad,categoria'),
       sbClient.from('materiales_usados').select('obra_id,nombre,cantidad_usada,categoria'),
@@ -898,11 +1103,14 @@ async function cargarMetricas() {
       sbClient.from('instaladores').select('id,nombre')
     ]);
 
-    const obras      = resObras.data || [];
-    const jornadas   = resJornadas.data || [];
-    const mats       = resMats.data || [];
-    const matsUsados = resMatsUsados.data || [];
-    const desvs      = resDesv.data || [];
+    // Filtro por período (global): se filtran las obras y, en cascada, todo lo demás
+    const _start = periodoStart(metPeriodo);
+    const obras      = (resObras.data || []).filter(o => !_start || (o.fecha && new Date(o.fecha) >= _start));
+    const _okIds     = new Set(obras.map(o => o.id));
+    const jornadas   = (resJornadas.data || []).filter(j => _okIds.has(j.obra_id));
+    const mats       = (resMats.data || []).filter(m => _okIds.has(m.obra_id));
+    const matsUsados = (resMatsUsados.data || []).filter(m => _okIds.has(m.obra_id));
+    const desvs      = (resDesv.data || []).filter(d => _okIds.has(d.obra_id));
     const insts      = resInst.data || [];
 
     const instMap = {};
@@ -938,6 +1146,7 @@ async function cargarMetricas() {
     const kitCount = {};
     obras.forEach(o => { kitCount[o.kit] = (kitCount[o.kit]||0)+1; });
     const maxKit = Math.max(...Object.values(kitCount), 1);
+    const maxTot = Math.max(...Object.values(porKit).map(d => d.total), 1);
 
     document.getElementById('metResumen').innerHTML = `
       <div class="met-grid">
@@ -946,31 +1155,33 @@ async function cargarMetricas() {
           <div class="met-sub">Instalaciones completadas</div>
         </div>
         <div class="met-box">
-          <div class="met-val" style="color:#f59e0b">${pendientes.length}</div>
+          <div class="met-val" style="color:#64748b">${pendientes.length}</div>
           <div class="met-sub">Pendientes / en curso</div>
         </div>
       </div>
 
       <div class="met-label">Completadas vs pendientes por kit</div>
-      ${Object.entries(porKit).map(([kit, d]) => `
-        <div class="met-kit-row">
-          <span class="met-kit-badge ${d.kclass}">${kit}</span>
-          <span style="flex:1;margin:0 10px">
-            <div style="height:6px;background:var(--line);border-radius:999px;overflow:hidden">
-              <div style="height:100%;width:${d.total?Math.round(d.comp/d.total*100):0}%;background:var(--green);border-radius:999px"></div>
+      <div class="stack-chart">
+        ${Object.entries(porKit).map(([kit, d]) => {
+          const h = 14 + (maxTot ? Math.round(d.total / maxTot * 130) : 0);
+          const compPct = d.total ? Math.round(d.comp / d.total * 100) : 0;
+          const color = KIT_COLORS[kit] || '#6366f1';
+          return `<div class="stack-col">
+            <div class="stack-cnt">${d.comp}/${d.total}</div>
+            <div class="stack-bar" style="height:${h}px">
+              <div class="stack-pend" style="height:${100 - compPct}%;background:${color}"></div>
+              <div class="stack-done" style="height:${compPct}%;background:${color}"></div>
             </div>
-          </span>
-          <span style="font-size:12px;color:var(--muted)">${d.comp}/${d.total}</span>
-        </div>`).join('')}
+            <span class="met-kit-badge ${d.kclass}">${kit}</span>
+          </div>`;
+        }).join('') || '<div class="empty-state">Sin obras en este período</div>'}
+      </div>
+      <div class="stack-legend"><span><span class="sl-box"></span>Instaladas</span><span><span class="sl-box light"></span>Pendientes</span></div>
 
-      <div class="met-label" style="margin-top:14px">Instalaciones por kit</div>
-      ${Object.entries(kitCount).map(([kit,n]) => `
-        <div class="met-bar-wrap">
-          <div class="met-bar-label"><span>${kit}</span><span>${n}</span></div>
-          <div class="met-bar"><div class="met-bar-fill" style="width:${Math.round(n/maxKit*100)}%;background:${KIT_COLORS[kit]||'#6366f1'}"></div></div>
-        </div>`).join('')}
+      <div class="met-label sep">Instalaciones por kit</div>
+      ${donutHTML(Object.entries(kitCount), obras.length)}
 
-      <div class="met-label" style="margin-top:14px">Top 5 localidades</div>
+      <div class="met-label sep">Top 5 localidades</div>
       ${top5loc.map(([loc,n],i) => `
         <div class="rank-row">
           <div class="rank-num">${i+1}</div>
@@ -1022,7 +1233,7 @@ async function cargarMetricas() {
         </div>`;
       }).join('')}
 
-      <div class="met-label" style="margin-top:14px">Ranking instaladores por tiempo promedio</div>
+      <div class="met-label sep">Ranking instaladores por tiempo promedio</div>
       ${rankData.length === 0
         ? '<div class="empty-state">Sin obras finalizadas con tiempo registrado</div>'
         : rankData.map((r,i) => `
@@ -1043,10 +1254,14 @@ async function cargarMetricas() {
       const key = kit + '|' + m.nombre;
       matFreq[key] = (matFreq[key]||0) + (m.cantidad||1);
     });
-    const topMats = Object.entries(matFreq).map(([k,n]) => {
-      const [kit, nombre] = k.split('|');
-      return { kit, nombre, n };
-    }).sort((a,b) => b.n - a.n).slice(0,8);
+    _matsPorKit = {};
+    Object.entries(matFreq).forEach(([k, n]) => {
+      const idx = k.indexOf('|');
+      const kit = k.slice(0, idx), nombre = k.slice(idx + 1);
+      (_matsPorKit[kit] = _matsPorKit[kit] || []).push({ nombre, n });
+    });
+    Object.values(_matsPorKit).forEach(arr => arr.sort((a, b) => b.n - a.n));
+    const kitsMat = Object.keys(_matsPorKit).sort();
 
     // Desvíos planificado vs usado
     const desvMat = {};
@@ -1065,17 +1280,12 @@ async function cargarMetricas() {
       .sort((a,b) => b.diff - a.diff).slice(0,5);
 
     document.getElementById('metMateriales').innerHTML = `
-      <div class="met-label">Materiales más frecuentes por kit</div>
-      ${topMats.length === 0
+      <div class="met-label">Materiales por kit</div>
+      ${kitsMat.length === 0
         ? '<div class="empty-state">Sin datos de materiales</div>'
-        : topMats.map(m => `
-        <div class="met-kit-row">
-          <span class="met-kit-badge ${KIT_CLASS[m.kit]}">${m.kit}</span>
-          <span style="flex:1;margin-left:8px">${m.nombre}</span>
-          <span style="font-weight:700;color:var(--muted);font-size:12px">${m.n} un.</span>
-        </div>`).join('')}
+        : `<select id="metMatKit" class="assign-select" style="width:100%;margin-bottom:10px" onchange="renderMatsKit(this.value)">${kitsMat.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('')}</select><div id="metMatList"></div>`}
 
-      <div class="met-label" style="margin-top:14px">Top desvíos planificado vs usado</div>
+      <div class="met-label sep">Top desvíos planificado vs usado</div>
       ${topDesvios.length === 0
         ? '<div class="empty-state">Sin datos de materiales usados todavía</div>'
         : topDesvios.map(d => `
@@ -1085,6 +1295,7 @@ async function cargarMetricas() {
           <div class="dev-used ${d.usado <= d.plan ? 'ok' : ''}">Usado: ${d.usado}</div>
         </div>`).join('')}
     `;
+    if(kitsMat.length) renderMatsKit(kitsMat[0]);
 
     // ── CALIDAD ──────────────────────────────────────
     // Tasa de imprevistos por kit
@@ -1117,7 +1328,7 @@ async function cargarMetricas() {
         </div>`;
       }).join('')}
 
-      <div class="met-label" style="margin-top:14px">Top 5 tipos de desviaciones</div>
+      <div class="met-label sep">Top 5 tipos de desviaciones</div>
       ${top5desv.length === 0
         ? '<div class="empty-state">Sin desviaciones registradas todavía</div>'
         : top5desv.map(([tipo,n],i) => `
@@ -1140,7 +1351,9 @@ async function cargarMetricas() {
     });
   }
 }
-</script>
+
+// Rellenar los iconos SVG estáticos (placeholders data-icon)
+document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = icon(el.dataset.icon); });
 </script>
 </body>
 </html>
