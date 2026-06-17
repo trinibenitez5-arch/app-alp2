@@ -171,6 +171,25 @@
   .dev-planned{color:var(--muted);font-size:12px}
   .dev-used{font-weight:700;color:#dc2626}
   .dev-used.ok{color:var(--green-d)}
+
+  /* AUTOCOMPLETE DIRECCIÓN */
+  .ac-wrap{position:relative}
+  .ac-wrap input{width:100%}
+  .ac-list{position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff;
+    border:1px solid var(--line); border-radius:10px; box-shadow:0 14px 32px rgba(15,23,42,.16);
+    z-index:50; overflow:hidden auto; max-height:280px; display:none}
+  .ac-list.show{display:block}
+  .ac-item{display:flex; align-items:center; gap:11px; padding:11px 13px; cursor:pointer; border-bottom:1px solid var(--line)}
+  .ac-item:last-child{border-bottom:0}
+  .ac-item:hover, .ac-item.active{background:var(--green-l)}
+  .ac-pin{width:20px; height:20px; color:var(--muted); flex:none}
+  .ac-text{flex:1; min-width:0}
+  .ac-main{font-size:14px; font-weight:600; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .ac-sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .ac-empty{padding:12px 13px; font-size:13px; color:var(--muted)}
+  .ac-hint{font-size:11.5px; color:#94a3b8; margin-top:4px}
+  .ac-ok{font-size:11.5px; color:var(--green-d); margin-top:4px; font-weight:600; display:none}
+
   @media(max-width:480px){
     .form-grid{grid-template-columns:1fr}
     .kit-grid{grid-template-columns:1fr}
@@ -296,7 +315,12 @@
     <div class="form-grid full" style="margin-bottom:12px">
       <div class="field">
         <label>Dirección</label>
-        <input type="text" id="fDireccion" placeholder="Ej: Av. Mariano Castex 1450"/>
+        <div class="ac-wrap">
+          <input type="text" id="fDireccion" placeholder="Empezá a escribir la dirección…" autocomplete="off"/>
+          <div class="ac-list" id="acList"></div>
+        </div>
+        <div class="ac-hint" id="acHint">Escribí y elegí una opción para autocompletar la localidad y ubicar el mapa.</div>
+        <div class="ac-ok" id="acOk">✓ Ubicación seleccionada (mapa exacto)</div>
       </div>
     </div>
 
@@ -403,6 +427,60 @@ const CATS_VALIDAS = ['Equipos','Servicios','Tablero de CA','Tablero de CC','Cab
 
 let parsedData = null;
 let selectedKit = 'C';
+
+// Coordenadas elegidas en el autocompletado (null hasta elegir una opción)
+let selLat = null, selLon = null;
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ====== AUTOCOMPLETADO DE DIRECCIÓN (Photon · OpenStreetMap, sin clave) ====== */
+let acTimer = null;
+const acInput = document.getElementById('fDireccion');
+const acListEl = document.getElementById('acList');
+acInput.addEventListener('input', () => {
+  selLat = null; selLon = null;
+  document.getElementById('acOk').style.display = 'none';
+  document.getElementById('acHint').style.display = 'block';
+  const q = acInput.value.trim();
+  clearTimeout(acTimer);
+  if(q.length < 3) { acListEl.classList.remove('show'); return; }
+  acTimer = setTimeout(() => buscarDireccion(q), 350);
+});
+acInput.addEventListener('blur', () => setTimeout(() => acListEl.classList.remove('show'), 150));
+acInput.addEventListener('keydown', e => { if(e.key === 'Escape') acListEl.classList.remove('show'); });
+async function buscarDireccion(q) {
+  try {
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lat=-34.60&lon=-58.42`;
+    const res = await fetch(url);
+    const data = await res.json();
+    renderAc((data && data.features) ? data.features : []);
+  } catch(err) { acListEl.classList.remove('show'); }
+}
+function renderAc(feats) {
+  if(!feats.length) {
+    acListEl.innerHTML = '<div class="ac-empty">Sin resultados. Probá con calle y número.</div>';
+    acListEl.classList.add('show'); return;
+  }
+  acListEl.innerHTML = feats.map(f => {
+    const p = f.properties, c = f.geometry.coordinates; // [lon, lat]
+    const calle = [p.street || p.name, p.housenumber].filter(Boolean).join(' ');
+    const loc = [p.city || p.district || p.locality || p.county, p.state].filter(Boolean).join(', ');
+    return `<div class="ac-item" data-lat="${c[1]}" data-lon="${c[0]}" data-dir="${esc(calle || p.name || '')}" data-loc="${esc(loc)}" onmousedown="elegirDireccion(this)">
+      <svg class="ac-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="ac-text"><div class="ac-main">${esc(calle || p.name || '')}</div><div class="ac-sub">${esc(loc || p.country || '')}</div></div>
+    </div>`;
+  }).join('');
+  acListEl.classList.add('show');
+}
+function elegirDireccion(el) {
+  document.getElementById('fDireccion').value = el.getAttribute('data-dir');
+  const loc = el.getAttribute('data-loc');
+  if(loc) document.getElementById('fLocalidad').value = loc;
+  selLat = parseFloat(el.getAttribute('data-lat'));
+  selLon = parseFloat(el.getAttribute('data-lon'));
+  acListEl.classList.remove('show');
+  document.getElementById('acHint').style.display = 'none';
+  document.getElementById('acOk').style.display = 'block';
+}
 
 // Drag & drop
 const dz = document.getElementById('dropZone');
@@ -629,6 +707,8 @@ async function cargarObra() {
         direccion: dir,
         localidad: loc,
         confirmada: confirmada,
+        lat: selLat,
+        lon: selLon,
         mat_key: parsedData.cliente.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')
       })
       .select()
